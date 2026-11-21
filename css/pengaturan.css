@@ -1,0 +1,47 @@
+/* =====================================================
+   PENGATURAN.CSS — Halaman Pengaturan & pengingat backup
+   ===================================================== */
+
+/* Banner pengingat backup (warna biru, beda dari tagihan) */
+.backup-reminder {
+  margin-bottom: 16px;
+}
+
+.backup-reminder:empty {
+  display: none;
+}
+
+.reminder-item.backup {
+  background: var(--info-soft);
+  color: var(--info);
+}
+
+.reminder-item.backup .link-btn + .link-btn {
+  margin-left: 4px;
+  opacity: 0.8;
+}
+
+/* Kartu "Tentang" */
+.about {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.about-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+}
+
+.about-name {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.about-meta {
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}

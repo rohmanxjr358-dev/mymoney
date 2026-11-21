@@ -1,0 +1,230 @@
+/* =====================================================
+   LAPORAN.CSS — Halaman Laporan + tampilan saat dicetak
+   ===================================================== */
+
+#page-laporan > * + * {
+  margin-top: 16px;
+}
+
+#report-insights > * + * {
+  margin-top: 16px;
+}
+
+/* ===== PILIHAN PERIODE ===== */
+.report-types {
+  margin-top: 0;
+}
+
+.report-nav {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 14px;
+}
+
+.report-label {
+  flex: 1;
+  font-size: 17px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.report-export {
+  margin-top: 14px;
+}
+
+/* Tiga tombol ekspor tetap berjajar, juga di HP */
+.report-export.button-row .btn {
+  flex: 1 1 0;
+}
+
+/* ===== RINGKASAN ===== */
+.print-title {
+  display: none;
+}
+
+.report-stats {
+  margin-top: 0;
+}
+
+.report-net {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 12px;
+  padding: 12px 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.report-net strong {
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+/* ===== SOROTAN ===== */
+.highlight-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.highlight {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.highlight .material-symbols-rounded {
+  flex-shrink: 0;
+  padding: 6px;
+  border-radius: 10px;
+  background: var(--primary-soft);
+  color: var(--primary);
+  font-size: 20px;
+}
+
+/* ===== PERINGKAT PENGELUARAN TERBESAR ===== */
+.rank-list {
+  margin-top: 8px;
+}
+
+.rank-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.rank-row:last-child {
+  border-bottom: none;
+}
+
+.rank-no {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--bg);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.rank-info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  font-size: 14px;
+}
+
+.rank-info small {
+  overflow: hidden;
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.rank-amount {
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* ===== DAFTAR TRANSAKSI (bisa dilipat) ===== */
+.report-tx-details summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  list-style: none;
+  cursor: pointer;
+}
+
+.report-tx-details summary::-webkit-details-marker {
+  display: none;
+}
+
+.report-tx-details summary::after {
+  content: 'expand_more';
+  font-family: 'Material Symbols Rounded';
+  font-size: 22px;
+  color: var(--muted);
+}
+
+.report-tx-details[open] summary::after {
+  content: 'expand_less';
+}
+
+.report-tx-details summary .card-title {
+  flex: 1;
+  margin: 0;
+}
+
+/* ===== TAMPILAN SAAT DICETAK / DISIMPAN PDF ===== */
+@media print {
+  body {
+    background: #fff;
+  }
+
+  .sidebar,
+  .topbar,
+  .bill-reminder,
+  .more-sheet,
+  .modal,
+  .toast,
+  .report-types,
+  .report-nav .icon-btn,
+  .report-nav .link-btn,
+  .report-export,
+  .chart-table summary,
+  .tx-actions {
+    display: none !important;
+  }
+
+  .content {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .print-title {
+    display: block;
+    margin-bottom: 12px;
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  .card,
+  .stat,
+  .dash-grid {
+    break-inside: avoid;
+  }
+
+  .card {
+    border-color: #ddd;
+  }
+
+  .dash-stats {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+
+  .dash-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .chart-box {
+    height: 220px;
+  }
+}

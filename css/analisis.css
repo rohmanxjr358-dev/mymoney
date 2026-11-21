@@ -1,0 +1,59 @@
+/* =====================================================
+   ANALISIS.CSS — Kartu Analisis & Saran
+   ===================================================== */
+
+.insight-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.insight {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border-left: 4px solid var(--primary);
+  border-radius: 10px;
+  background: var(--primary-soft);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.insight .material-symbols-rounded {
+  flex-shrink: 0;
+  font-size: 20px;
+  color: var(--primary);
+}
+
+.insight p {
+  margin: 0;
+}
+
+.insight-tip {
+  margin-top: 4px !important;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* Warna sesuai tingkat: buruk / perlu perhatian / info / baik */
+.insight.bad  { border-left-color: var(--danger);  background: var(--danger-soft); }
+.insight.warn { border-left-color: #d97706;        background: var(--warning-soft); }
+.insight.good { border-left-color: var(--success); background: var(--success-soft); }
+
+.insight.bad  .material-symbols-rounded { color: var(--danger); }
+.insight.warn .material-symbols-rounded { color: var(--warning); }
+.insight.good .material-symbols-rounded { color: var(--success); }
+
+.insight-note {
+  margin-top: 12px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+@media print {
+  .insight {
+    break-inside: avoid;
+  }
+}

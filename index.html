@@ -4,6 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>MyMoney</title>
+  <meta name="description" content="Catatan keuangan pribadi: uang bulanan, anggaran mingguan, tabungan, tagihan, dan laporan.">
+
+  <!-- Mode aplikasi (PWA): ikon, nama, dan warna saat dipasang di HP -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#0f766e">
+  <link rel="icon" type="image/png" href="icons/favicon-32.png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="MyMoney">
 
   <!-- Font dan ikon dari Google -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
@@ -24,6 +35,9 @@
   <link rel="stylesheet" href="css/tabungan.css">
   <link rel="stylesheet" href="css/tagihan.css">
   <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/laporan.css">
+  <link rel="stylesheet" href="css/analisis.css">
+  <link rel="stylesheet" href="css/pengaturan.css">
 </head>
 <body>
   <div class="app">
@@ -87,6 +101,9 @@
         <p id="today-date"></p>
       </header>
 
+      <!-- Pengingat backup (tampil di semua halaman, diisi oleh pengaturan.js) -->
+      <div class="backup-reminder" id="backup-reminder"></div>
+
       <!-- Pengingat tagihan (tampil di semua halaman, diisi oleh tagihan.js) -->
       <div class="bill-reminder" id="bill-reminder"></div>
 
@@ -95,6 +112,7 @@
         <div class="dash-hero" id="dash-hero"></div>
         <div class="dash-stats" id="dash-stats"></div>
         <div class="card" id="dash-safe"></div>
+        <div class="card" id="dash-analysis"></div>
         <div class="dash-funds" id="dash-funds"></div>
         <div class="dash-grid">
           <div class="card" id="dash-categories"></div>
@@ -391,15 +409,22 @@
         <div class="card" id="bill-list"></div>
       </section>
 
+      <!-- ===== HALAMAN LAPORAN (diisi oleh laporan.js) ===== -->
       <section class="page" id="page-laporan">
-        <div class="card">
-          <h2 class="card-title">Laporan</h2>
-          <p class="card-text">Laporan, grafik, dan ekspor (Fase 10 &amp; 11).</p>
-        </div>
+        <div class="card" id="report-controls"></div>
+        <div id="report-summary"></div>
+        <div class="card" id="report-analysis"></div>
+        <div id="report-insights"></div>
+        <div class="card" id="report-trend"></div>
+        <div class="card" id="report-compare"></div>
+        <div class="card" id="report-transactions"></div>
       </section>
 
       <!-- ===== HALAMAN PENGATURAN ===== -->
       <section class="page" id="page-pengaturan">
+
+        <!-- Preferensi (diisi oleh pengaturan.js) -->
+        <div class="card" id="settings-general"></div>
 
         <!-- Kelola kategori -->
         <div class="card">
@@ -486,6 +511,11 @@
             dan lakukan backup minimal seminggu sekali.
           </p>
         </div>
+
+        <!-- Info penyimpanan, hapus data, tentang (diisi oleh pengaturan.js) -->
+        <div class="card" id="settings-storage"></div>
+        <div class="card" id="settings-danger"></div>
+        <div class="card" id="settings-about"></div>
       </section>
     </main>
 
@@ -591,5 +621,9 @@
   <script src="js/tagihan.js"></script>
   <script src="js/uangaman.js"></script>
   <script src="js/dashboard.js"></script>
+  <script src="js/laporan.js"></script>
+  <script src="js/analisis.js"></script>
+  <script src="js/pwa.js"></script>
+  <script src="js/pengaturan.js"></script>
 </body>
 </html>

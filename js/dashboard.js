@@ -439,6 +439,9 @@ function renderDashboard() {
   renderDashCategories();
   renderDashChart();
   renderDashRecent();
+
+  // Kartu analisis (dibuat di analisis.js)
+  if (typeof renderDashAnalysis === 'function') renderDashAnalysis();
 }
 
 
