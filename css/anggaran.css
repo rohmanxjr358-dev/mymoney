@@ -1,0 +1,191 @@
+/* =====================================================
+   ANGGARAN.CSS — Halaman Anggaran Mingguan
+   ===================================================== */
+
+.status-badge.over {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+/* ===== KARTU "PEKAN INI" ===== */
+.week-label {
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.budget-hero {
+  margin-top: 14px;
+}
+
+.budget-hero span {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.budget-hero strong {
+  display: block;
+  font-size: 30px;
+  font-weight: 700;
+}
+
+.budget-hero strong.negative {
+  color: var(--danger);
+}
+
+.budget-bar {
+  height: 10px;
+  margin-top: 12px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--bg);
+}
+
+.budget-bar span {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--primary);
+}
+
+/* Warna bar: oranye = hampir habis, merah = melebihi */
+.budget-bar.warn span,
+.mini-bar.warn span {
+  background: #d97706;
+}
+
+.budget-bar.over span,
+.mini-bar.over span {
+  background: var(--danger);
+}
+
+.stat-grid.three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+/* Kotak peringatan kecil berwarna kuning */
+.inline-hint {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--warning-soft);
+  color: var(--warning);
+  font-size: 13px;
+}
+
+/* ===== DAFTAR PEKAN ===== */
+.week-list {
+  margin-top: 12px;
+}
+
+.week-row {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.week-row:last-child {
+  border-bottom: none;
+}
+
+/* Pekan yang sedang berjalan diberi latar hijau muda */
+.week-row.state-berjalan {
+  margin: 0 -10px;
+  padding: 12px 10px;
+  border-bottom-color: transparent;
+  border-radius: 12px;
+  background: var(--primary-soft);
+}
+
+.week-row.state-selesai .week-title {
+  color: var(--muted);
+}
+
+.week-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 200px);
+  gap: 12px;
+  align-items: center;
+}
+
+.week-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.week-state {
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--bg);
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.state-berjalan .week-state {
+  background: var(--primary);
+  color: #fff;
+}
+
+.week-dates {
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.week-row .input-prefix input {
+  width: 100%;
+  min-width: 0;
+  padding: 10px 12px;
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+  outline: none;
+}
+
+.week-status {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.week-status:empty {
+  display: none;
+}
+
+/* Kotak centang "bawa sisa" */
+.check-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.check-row input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--primary);
+}
+
+/* ===== TAMPILAN HP ===== */
+@media (max-width: 768px) {
+  .stat-grid.three {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .week-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 140px);
+  }
+
+  .budget-hero strong {
+    font-size: 26px;
+  }
+}

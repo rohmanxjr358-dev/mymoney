@@ -1,0 +1,150 @@
+/* =====================================================
+   TRANSAKSI.CSS — Tampilan daftar transaksi
+   ===================================================== */
+
+.tx-list {
+  display: flex;
+  flex-direction: column;
+  margin-top: 8px;
+}
+
+.tx-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.tx-item:last-child {
+  border-bottom: none;
+}
+
+/* Transaksi yang sedang diedit diberi latar hijau muda */
+.tx-item.editing {
+  margin: 0 -10px;
+  padding: 12px 10px;
+  border-radius: 12px;
+  background: var(--primary-soft);
+}
+
+/* Ikon bulat di kiri */
+.tx-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+}
+
+.tx-icon .material-symbols-rounded {
+  font-size: 20px;
+}
+
+.tx-icon.masuk  { background: var(--success-soft); color: var(--success); }
+.tx-icon.keluar { background: var(--danger-soft);  color: var(--danger); }
+.tx-icon.sisih  { background: var(--primary-soft); color: var(--primary); }
+
+/* Teks di tengah */
+.tx-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.tx-category {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.tx-note {
+  overflow: hidden;
+  font-size: 13px;
+  color: var(--muted);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.tx-meta {
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.tx-badge {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--primary-soft);
+  color: var(--primary);
+  font-size: 11px;
+  font-weight: 600;
+  vertical-align: middle;
+}
+
+/* Bagian kanan: nominal + tombol aksi */
+.tx-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.tx-amount {
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.tx-amount.masuk  { color: var(--success); }
+.tx-amount.keluar { color: var(--danger); }
+.tx-amount.sisih  { color: var(--primary); }
+
+.tx-actions {
+  display: flex;
+  gap: 2px;
+}
+
+/* Tombol ikon kecil (edit / hapus) */
+.icon-btn {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 8px;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.icon-btn .material-symbols-rounded {
+  font-size: 18px;
+}
+
+.icon-btn:hover {
+  background: var(--bg);
+  color: var(--text);
+}
+
+.icon-btn.danger:hover {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+/* Kartu formulir saat mode edit */
+.card.editing {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-soft);
+}
+
+/* Pesan saat daftar masih kosong */
+.empty-state {
+  padding: 24px 8px;
+  font-size: 14px;
+  color: var(--muted);
+  text-align: center;
+}

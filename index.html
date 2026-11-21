@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>MyMoney</title>
+
+  <!-- Font dan ikon dari Google -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0">
+
+  <!-- File tampilan buatan kita -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/forms.css">
+  <link rel="stylesheet" href="css/transaksi.css">
+  <link rel="stylesheet" href="css/kategori.css">
+  <link rel="stylesheet" href="css/riwayat.css">
+  <link rel="stylesheet" href="css/modal.css">
+  <link rel="stylesheet" href="css/detail.css">
+  <link rel="stylesheet" href="css/bulanan.css">
+  <link rel="stylesheet" href="css/alokasi.css">
+  <link rel="stylesheet" href="css/anggaran.css">
+  <link rel="stylesheet" href="css/tabungan.css">
+  <link rel="stylesheet" href="css/tagihan.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+  <div class="app">
+
+    <!-- ===== SIDEBAR / NAVIGASI ===== -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-logo">M</div>
+        <div>
+          <div class="brand-name">MyMoney</div>
+          <div class="brand-sub">Personal Finance Tracker</div>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <button class="nav-item" data-page="dashboard">
+          <span class="material-symbols-rounded">space_dashboard</span>
+          <span class="nav-label">Dashboard</span>
+        </button>
+        <button class="nav-item" data-page="transaksi">
+          <span class="material-symbols-rounded">receipt_long</span>
+          <span class="nav-label">Transaksi</span>
+        </button>
+        <button class="nav-item" data-page="anggaran">
+          <span class="material-symbols-rounded">calendar_view_week</span>
+          <span class="nav-label">Anggaran Mingguan</span>
+        </button>
+        <button class="nav-item desktop-only" data-page="bulanan">
+          <span class="material-symbols-rounded">account_balance_wallet</span>
+          <span class="nav-label">Uang Bulanan</span>
+        </button>
+        <button class="nav-item" data-page="tabungan">
+          <span class="material-symbols-rounded">savings</span>
+          <span class="nav-label">Tabungan</span>
+        </button>
+        <button class="nav-item desktop-only" data-page="tagihan">
+          <span class="material-symbols-rounded">event</span>
+          <span class="nav-label">Tagihan</span>
+        </button>
+        <button class="nav-item desktop-only" data-page="laporan">
+          <span class="material-symbols-rounded">bar_chart</span>
+          <span class="nav-label">Laporan</span>
+        </button>
+        <button class="nav-item desktop-only" data-page="pengaturan">
+          <span class="material-symbols-rounded">settings</span>
+          <span class="nav-label">Pengaturan</span>
+        </button>
+
+        <!-- Tombol "Lainnya" hanya muncul di HP -->
+        <button class="nav-item mobile-only" id="more-button">
+          <span class="material-symbols-rounded">more_horiz</span>
+          <span class="nav-label">Lainnya</span>
+        </button>
+      </nav>
+    </aside>
+
+    <!-- ===== ISI HALAMAN ===== -->
+    <main class="content">
+      <header class="topbar">
+        <h1 id="page-title">Dashboard</h1>
+        <p id="today-date"></p>
+      </header>
+
+      <!-- Pengingat tagihan (tampil di semua halaman, diisi oleh tagihan.js) -->
+      <div class="bill-reminder" id="bill-reminder"></div>
+
+      <!-- ===== HALAMAN DASHBOARD (diisi oleh dashboard.js) ===== -->
+      <section class="page" id="page-dashboard">
+        <div class="dash-hero" id="dash-hero"></div>
+        <div class="dash-stats" id="dash-stats"></div>
+        <div class="card" id="dash-safe"></div>
+        <div class="dash-funds" id="dash-funds"></div>
+        <div class="dash-grid">
+          <div class="card" id="dash-categories"></div>
+          <div class="card" id="dash-chart"></div>
+        </div>
+        <div class="card" id="dash-recent"></div>
+      </section>
+
+      <!-- ===== HALAMAN TRANSAKSI ===== -->
+      <section class="page" id="page-transaksi">
+
+        <!-- Tab: Catat / Riwayat -->
+        <div class="tabs" id="tx-tabs">
+          <button type="button" class="tab active" data-tab="catat">
+            <span class="material-symbols-rounded">edit_note</span>
+            Catat
+          </button>
+          <button type="button" class="tab" data-tab="riwayat">
+            <span class="material-symbols-rounded">history</span>
+            Riwayat
+          </button>
+        </div>
+
+        <!-- ===== TAB CATAT ===== -->
+        <div class="tab-panel active" id="tab-catat">
+          <div class="card">
+            <h2 class="card-title" id="form-title">Catat Transaksi</h2>
+
+            <form id="transaction-form" novalidate>
+              <!-- Pilihan jenis transaksi -->
+              <div class="segmented">
+                <button type="button" class="segmented-btn active" data-type="keluar">
+                  <span class="material-symbols-rounded">north_east</span>
+                  Uang Keluar
+                </button>
+                <button type="button" class="segmented-btn" data-type="masuk">
+                  <span class="material-symbols-rounded">south_west</span>
+                  Uang Masuk
+                </button>
+              </div>
+
+              <div class="form-grid">
+                <div class="field field-full">
+                  <label for="tx-amount">Nominal</label>
+                  <div class="input-prefix">
+                    <span>Rp</span>
+                    <input type="number" id="tx-amount" inputmode="numeric" min="1" step="1" placeholder="0">
+                  </div>
+                  <small class="field-hint" id="tx-amount-preview">Rp0</small>
+                </div>
+
+                <div class="field">
+                  <label for="tx-date">Tanggal</label>
+                  <input type="date" id="tx-date">
+                </div>
+
+                <div class="field">
+                  <label for="tx-time">Jam</label>
+                  <input type="time" id="tx-time">
+                </div>
+
+                <div class="field field-full">
+                  <label for="tx-category">Kategori</label>
+                  <select id="tx-category"></select>
+                  <button type="button" class="link-btn" id="tx-add-category">
+                    <span class="material-symbols-rounded">add</span>
+                    Tambah kategori baru
+                  </button>
+                </div>
+
+                <div class="field field-full" id="tx-source-field" hidden>
+                  <label for="tx-source">Sumber pemasukan <span class="optional">(boleh dikosongkan)</span></label>
+                  <input type="text" id="tx-source" placeholder="Contoh: Ayah, Kampus, Klien">
+                </div>
+
+                <div class="field field-full">
+                  <label for="tx-note">Keterangan <span class="optional">(boleh dikosongkan)</span></label>
+                  <textarea id="tx-note" rows="2" placeholder="Contoh: Makan bersama teman setelah kuliah"></textarea>
+                </div>
+              </div>
+
+              <div class="button-row">
+                <button type="submit" class="btn btn-primary">
+                  <span class="material-symbols-rounded">check</span>
+                  Simpan Transaksi
+                </button>
+                <button type="button" class="btn btn-secondary" id="tx-reset">
+                  Kosongkan
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Transaksi Terbaru</h2>
+              <button type="button" class="link-btn" id="tx-see-all">
+                Lihat semua
+                <span class="material-symbols-rounded">chevron_right</span>
+              </button>
+            </div>
+            <div class="tx-list" id="recent-transactions"></div>
+          </div>
+        </div>
+
+        <!-- ===== TAB RIWAYAT ===== -->
+        <div class="tab-panel" id="tab-riwayat">
+          <!-- Pencarian & filter -->
+          <div class="card">
+            <div class="search-box">
+              <span class="material-symbols-rounded">search</span>
+              <input type="search" id="hist-search" placeholder="Cari kategori, keterangan, sumber, nominal">
+            </div>
+
+            <div class="form-grid">
+              <div class="field">
+                <label for="hist-type">Jenis</label>
+                <select id="hist-type">
+                  <option value="semua">Semua jenis</option>
+                  <option value="masuk">Uang masuk</option>
+                  <option value="keluar">Uang keluar (semua)</option>
+                  <option value="pengeluaran">Pengeluaran saja</option>
+                  <option value="sisih">Disisihkan saja</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label for="hist-category">Kategori</label>
+                <select id="hist-category"></select>
+              </div>
+
+              <div class="field">
+                <label for="hist-period">Periode</label>
+                <select id="hist-period">
+                  <option value="semua">Semua waktu</option>
+                  <option value="hari-ini">Hari ini</option>
+                  <option value="7-hari">7 hari terakhir</option>
+                  <option value="bulan-ini">Bulan ini</option>
+                  <option value="bulan-lalu">Bulan lalu</option>
+                  <option value="custom">Pilih tanggal sendiri</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label for="hist-sort">Urutkan</label>
+                <select id="hist-sort">
+                  <option value="terbaru">Terbaru</option>
+                  <option value="terlama">Terlama</option>
+                  <option value="terbesar">Nominal terbesar</option>
+                  <option value="terkecil">Nominal terkecil</option>
+                </select>
+              </div>
+
+              <div class="field" id="hist-from-field" hidden>
+                <label for="hist-from">Dari tanggal</label>
+                <input type="date" id="hist-from">
+              </div>
+
+              <div class="field" id="hist-to-field" hidden>
+                <label for="hist-to">Sampai tanggal</label>
+                <input type="date" id="hist-to">
+              </div>
+            </div>
+
+            <div class="button-row">
+              <button type="button" class="btn btn-secondary" id="hist-reset">
+                <span class="material-symbols-rounded">restart_alt</span>
+                Reset Filter
+              </button>
+            </div>
+          </div>
+
+          <!-- Hasil -->
+          <div class="card">
+            <div class="history-summary" id="hist-summary"></div>
+            <div class="tx-list" id="hist-list"></div>
+            <button type="button" class="btn btn-secondary btn-block" id="hist-more" hidden>
+              Tampilkan lebih banyak
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== HALAMAN ANGGARAN MINGGUAN (diisi oleh anggaran.js) ===== -->
+      <section class="page" id="page-anggaran">
+        <div class="card" id="budget-current"></div>
+        <div class="card" id="budget-card"></div>
+      </section>
+
+      <!-- ===== HALAMAN UANG BULANAN ===== -->
+      <section class="page" id="page-bulanan">
+
+        <!-- Ringkasan periode berjalan (diisi oleh JavaScript) -->
+        <div class="card" id="period-current"></div>
+
+        <!-- Tanggal kesepakatan -->
+        <div class="card">
+          <h2 class="card-title">Tanggal Kesepakatan Transfer</h2>
+          <p class="card-text">
+            Tanggal transfer yang disepakati dengan orang tua.
+            Dipakai untuk mengisi perkiraan tanggal secara otomatis.
+          </p>
+          <form id="agreed-day-form" class="inline-form" novalidate>
+            <div class="field">
+              <label for="agreed-day">Setiap tanggal</label>
+              <input type="number" id="agreed-day" inputmode="numeric" min="1" max="31" placeholder="Contoh: 5">
+            </div>
+            <button type="submit" class="btn btn-secondary">Simpan</button>
+          </form>
+        </div>
+
+        <!-- Form catat uang bulanan -->
+        <div class="card" id="period-form-card">
+          <h2 class="card-title" id="period-form-title">Catat Uang Bulanan Diterima</h2>
+          <p class="card-text">
+            Otomatis tercatat sebagai pemasukan "Uang Bulanan dari Orang Tua" —
+            tidak perlu dicatat lagi di menu Transaksi.
+          </p>
+
+          <form id="period-form" novalidate>
+            <div class="form-grid">
+              <div class="field field-full">
+                <label for="period-amount">Nominal diterima</label>
+                <div class="input-prefix">
+                  <span>Rp</span>
+                  <input type="number" id="period-amount" inputmode="numeric" min="1" step="1" placeholder="0">
+                </div>
+                <small class="field-hint" id="period-amount-preview">Rp0</small>
+              </div>
+
+              <div class="field">
+                <label for="period-expected">Perkiraan tanggal transfer</label>
+                <input type="date" id="period-expected">
+              </div>
+
+              <div class="field">
+                <label for="period-received">Tanggal diterima</label>
+                <input type="date" id="period-received">
+              </div>
+
+              <div class="field field-full">
+                <label for="period-next">Perkiraan transfer berikutnya</label>
+                <input type="date" id="period-next">
+                <small class="field-hint">Bisa diubah kapan saja jika jadwal transfer bergeser.</small>
+              </div>
+
+              <div class="field field-full">
+                <label for="period-carry">Sisa uang bulan lalu yang ikut dibagi <span class="optional">(boleh dikosongkan)</span></label>
+                <div class="input-prefix">
+                  <span>Rp</span>
+                  <input type="number" id="period-carry" inputmode="numeric" min="0" step="1" placeholder="0">
+                </div>
+                <small class="field-hint">Tidak dicatat sebagai pemasukan baru — hanya ditambahkan ke uang yang akan dibagi.</small>
+              </div>
+
+              <div class="field field-full">
+                <label for="period-note">Keterangan <span class="optional">(boleh dikosongkan)</span></label>
+                <input type="text" id="period-note" placeholder="Contoh: Uang bulanan November">
+              </div>
+            </div>
+
+            <div class="button-row">
+              <button type="submit" class="btn btn-primary" id="period-submit">
+                <span class="material-symbols-rounded">check</span>
+                Simpan
+              </button>
+              <button type="button" class="btn btn-secondary" id="period-cancel" hidden>
+                Batal Edit
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Alokasi uang bulanan (diisi oleh alokasi.js) -->
+        <div class="card" id="alloc-card"></div>
+
+        <!-- Riwayat uang bulanan -->
+        <div class="card">
+          <h2 class="card-title">Riwayat Uang Bulanan</h2>
+          <div class="tx-list" id="period-list"></div>
+        </div>
+      </section>
+
+      <!-- ===== HALAMAN TABUNGAN (diisi oleh tabungan.js) ===== -->
+      <section class="page" id="page-tabungan">
+        <div class="card" id="fund-summary"></div>
+        <div class="fund-grid" id="fund-grid"></div>
+        <div class="card" id="fund-history"></div>
+      </section>
+
+      <!-- ===== HALAMAN TAGIHAN (diisi oleh tagihan.js) ===== -->
+      <section class="page" id="page-tagihan">
+        <div class="card" id="bill-month"></div>
+        <div class="card" id="bill-list"></div>
+      </section>
+
+      <section class="page" id="page-laporan">
+        <div class="card">
+          <h2 class="card-title">Laporan</h2>
+          <p class="card-text">Laporan, grafik, dan ekspor (Fase 10 &amp; 11).</p>
+        </div>
+      </section>
+
+      <!-- ===== HALAMAN PENGATURAN ===== -->
+      <section class="page" id="page-pengaturan">
+
+        <!-- Kelola kategori -->
+        <div class="card">
+          <h2 class="card-title">Kelola Kategori</h2>
+          <p class="card-text">Tambah kategori sendiri, ganti nama atau grup, dan hapus yang tidak dipakai.</p>
+
+          <div class="segmented" id="category-type">
+            <button type="button" class="segmented-btn active" data-type="keluar">
+              <span class="material-symbols-rounded">north_east</span>
+              Uang Keluar
+            </button>
+            <button type="button" class="segmented-btn" data-type="masuk">
+              <span class="material-symbols-rounded">south_west</span>
+              Uang Masuk
+            </button>
+          </div>
+
+          <form id="category-form" class="category-form" novalidate>
+            <h3 class="sub-title" id="category-form-title">Tambah Kategori</h3>
+            <div class="form-grid">
+              <div class="field field-full">
+                <label for="cat-name">Nama kategori</label>
+                <input type="text" id="cat-name" maxlength="40" placeholder="Contoh: Paket Internet">
+              </div>
+              <div class="field field-full">
+                <label for="cat-group">Grup <span class="optional">(boleh dikosongkan)</span></label>
+                <input type="text" id="cat-group" list="cat-group-options" maxlength="40">
+                <datalist id="cat-group-options"></datalist>
+              </div>
+            </div>
+            <div class="button-row">
+              <button type="submit" class="btn btn-primary" id="cat-submit">
+                <span class="material-symbols-rounded">add</span>
+                Tambah
+              </button>
+              <button type="button" class="btn btn-secondary" id="cat-cancel" hidden>
+                Batal
+              </button>
+            </div>
+          </form>
+
+          <div class="category-list" id="category-list"></div>
+        </div>
+
+        <!-- Backup & restore -->
+        <div class="card">
+          <h2 class="card-title">Backup &amp; Restore</h2>
+          <p class="card-text">
+            Simpan salinan seluruh data ke sebuah file, lalu pulihkan kapan saja —
+            misalnya saat ganti HP atau setelah data browser terhapus.
+          </p>
+
+          <div class="info-list">
+            <div class="info-row">
+              <span>Jumlah transaksi</span>
+              <strong id="info-total-transaksi">0</strong>
+            </div>
+            <div class="info-row">
+              <span>Jumlah kategori</span>
+              <strong id="info-total-kategori">0</strong>
+            </div>
+            <div class="info-row">
+              <span>Backup terakhir</span>
+              <strong id="info-last-backup">Belum pernah</strong>
+            </div>
+          </div>
+
+          <div class="button-row">
+            <button class="btn btn-primary" id="btn-backup">
+              <span class="material-symbols-rounded">download</span>
+              Unduh Backup
+            </button>
+            <button class="btn btn-secondary" id="btn-restore">
+              <span class="material-symbols-rounded">upload</span>
+              Pulihkan dari Backup
+            </button>
+          </div>
+
+          <!-- Kolom pilih file (disembunyikan, dibuka lewat tombol di atas) -->
+          <input type="file" id="restore-file" accept=".json,application/json" hidden>
+
+          <p class="hint">
+            Tips: simpan file backup di tempat aman seperti Google Drive atau iCloud Drive,
+            dan lakukan backup minimal seminggu sekali.
+          </p>
+        </div>
+      </section>
+    </main>
+
+  </div>
+
+  <!-- ===== PANEL "LAINNYA" (KHUSUS HP) ===== -->
+  <div class="more-sheet" id="more-sheet">
+    <div class="more-backdrop" id="more-backdrop"></div>
+    <div class="more-panel">
+      <div class="more-handle"></div>
+      <h3 class="more-title">Menu lainnya</h3>
+      <div class="more-grid">
+        <button class="more-item" data-page="bulanan">
+          <span class="material-symbols-rounded">account_balance_wallet</span>
+          <span>Uang Bulanan</span>
+        </button>
+        <button class="more-item" data-page="tagihan">
+          <span class="material-symbols-rounded">event</span>
+          <span>Tagihan</span>
+        </button>
+        <button class="more-item" data-page="laporan">
+          <span class="material-symbols-rounded">bar_chart</span>
+          <span>Laporan</span>
+        </button>
+        <button class="more-item" data-page="pengaturan">
+          <span class="material-symbols-rounded">settings</span>
+          <span>Pengaturan</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== JENDELA FORM TABUNGAN (setor / pakai / target) ===== -->
+  <div class="modal" id="fund-modal">
+    <div class="modal-backdrop" data-fund-close></div>
+    <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="fund-modal-title">
+      <div class="modal-header">
+        <h3 class="modal-title" id="fund-modal-title">Tabungan</h3>
+        <button type="button" class="icon-btn" data-fund-close title="Tutup">
+          <span class="material-symbols-rounded">close</span>
+        </button>
+      </div>
+      <div id="fund-modal-body"></div>
+    </div>
+  </div>
+
+  <!-- ===== JENDELA FORM TAGIHAN (tambah / edit / bayar) ===== -->
+  <div class="modal" id="bill-modal">
+    <div class="modal-backdrop" data-bill-close></div>
+    <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="bill-modal-title">
+      <div class="modal-header">
+        <h3 class="modal-title" id="bill-modal-title">Tagihan</h3>
+        <button type="button" class="icon-btn" data-bill-close title="Tutup">
+          <span class="material-symbols-rounded">close</span>
+        </button>
+      </div>
+      <div id="bill-modal-body"></div>
+    </div>
+  </div>
+
+  <!-- ===== JENDELA DETAIL TRANSAKSI ===== -->
+  <div class="modal" id="detail-modal">
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="detail-title">
+      <div class="modal-header">
+        <h3 class="modal-title" id="detail-title">Detail Transaksi</h3>
+        <button type="button" class="icon-btn" data-close title="Tutup">
+          <span class="material-symbols-rounded">close</span>
+        </button>
+      </div>
+
+      <div id="detail-body"></div>
+
+      <div class="button-row">
+        <button type="button" class="btn btn-primary" id="detail-edit">
+          <span class="material-symbols-rounded">edit</span>
+          Edit
+        </button>
+        <button type="button" class="btn btn-danger" id="detail-delete">
+          <span class="material-symbols-rounded">delete</span>
+          Hapus
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- File JavaScript buatan kita (urutannya penting!) -->
+  <!-- Pustaka grafik (dari internet) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js"></script>
+
+  <script src="js/storage.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/backup.js"></script>
+  <script src="js/transaksi.js"></script>
+  <script src="js/kategori.js"></script>
+  <script src="js/riwayat.js"></script>
+  <script src="js/detail.js"></script>
+  <script src="js/bulanan.js"></script>
+  <script src="js/alokasi.js"></script>
+  <script src="js/anggaran.js"></script>
+  <script src="js/tabungan.js"></script>
+  <script src="js/tagihan.js"></script>
+  <script src="js/uangaman.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>

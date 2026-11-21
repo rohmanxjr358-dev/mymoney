@@ -1,0 +1,151 @@
+/* =====================================================
+   TABUNGAN.CSS — Halaman Tabungan
+   ===================================================== */
+
+.text-danger {
+  color: var(--danger);
+}
+
+/* Total dana di kartu ringkasan */
+.fund-total {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 12px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--primary-soft);
+  color: var(--primary);
+  font-size: 14px;
+}
+
+.fund-total strong {
+  font-size: 24px;
+}
+
+/* ===== TIGA KARTU POS ===== */
+.fund-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.fund-grid + .card {
+  margin-top: 16px;
+}
+
+.fund-card {
+  display: flex;
+  flex-direction: column;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.fund-card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.fund-name {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.fund-hint {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.fund-balance {
+  margin-top: 14px;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.fund-target {
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.fund-stats {
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.fund-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 14px;
+}
+
+.btn-sm {
+  padding: 8px 12px;
+  font-size: 13px;
+}
+
+.btn-sm .material-symbols-rounded {
+  font-size: 18px;
+}
+
+/* Saldo di dalam form "Pakai" */
+.fund-available {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--bg);
+  font-size: 14px;
+}
+
+.fund-available strong {
+  font-size: 18px;
+}
+
+/* ===== TOMBOL FILTER RIWAYAT ===== */
+.filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.filter-chip {
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  font: inherit;
+  font-size: 13px;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.filter-chip.active {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+  color: var(--primary);
+  font-weight: 600;
+}
+
+/* ===== TAMPILAN HP ===== */
+@media (max-width: 1100px) {
+  .fund-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .fund-actions .btn {
+    flex: 1;
+  }
+}

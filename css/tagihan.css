@@ -1,0 +1,129 @@
+/* =====================================================
+   TAGIHAN.CSS — Tagihan & pengingat
+   ===================================================== */
+
+.text-success {
+  color: var(--success);
+}
+
+.status-badge.neutral {
+  background: var(--bg);
+  color: var(--muted);
+}
+
+/* Tombol ‹ hari ini › */
+.month-nav {
+  display: flex;
+  gap: 2px;
+}
+
+/* ===== BARIS TAGIHAN BULAN INI ===== */
+.bill-rows {
+  margin-top: 8px;
+}
+
+.bill-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.bill-row:last-child {
+  border-bottom: none;
+}
+
+.bill-row .tx-right {
+  gap: 8px;
+}
+
+.bill-status-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.bill-paid-on {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* ===== BANNER PENGINGAT (di atas semua halaman) ===== */
+.bill-reminder {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.bill-reminder:empty {
+  display: none;
+}
+
+.reminder-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--warning-soft);
+  color: var(--warning);
+  font-size: 14px;
+}
+
+.reminder-item.overdue {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.reminder-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.reminder-item .link-btn {
+  color: inherit;
+  text-decoration: underline;
+}
+
+/* ===== TITIK MERAH DI MENU ===== */
+.nav-item {
+  position: relative;
+}
+
+.nav-item.has-alert::after {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 30px;
+  width: 8px;
+  height: 8px;
+  border: 2px solid var(--surface);
+  border-radius: 50%;
+  background: var(--danger);
+}
+
+.more-item {
+  position: relative;
+}
+
+.more-item.has-alert::after {
+  content: '';
+  position: absolute;
+  top: 8px;
+  right: 14px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--danger);
+}
+
+@media (max-width: 768px) {
+  .nav-item.has-alert::after {
+    top: 4px;
+    left: calc(50% + 6px);
+  }
+}

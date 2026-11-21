@@ -1,0 +1,134 @@
+/* =====================================================
+   RIWAYAT.CSS — Tab, pencarian, filter, riwayat
+   ===================================================== */
+
+/* ===== TAB: CATAT / RIWAYAT ===== */
+.tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: -1px;
+  padding: 10px 14px;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: none;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.tab .material-symbols-rounded {
+  font-size: 20px;
+}
+
+.tab.active {
+  border-bottom-color: var(--primary);
+  color: var(--primary);
+}
+
+.tab-panel {
+  display: none;
+}
+
+.tab-panel.active {
+  display: block;
+}
+
+/* Judul kartu dengan tombol di sebelah kanan */
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.card-header .link-btn {
+  align-self: center;
+}
+
+/* ===== KOTAK PENCARIAN ===== */
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.search-box:focus-within {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-soft);
+}
+
+.search-box .material-symbols-rounded {
+  color: var(--muted);
+}
+
+.search-box input {
+  flex: 1;
+  min-width: 0;
+  padding: 11px 0;
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: 16px;
+  color: var(--text);
+  outline: none;
+}
+
+/* ===== RINGKASAN HASIL FILTER ===== */
+.history-summary {
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.summary-count {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.summary-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.chip {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.chip.masuk  { background: var(--success-soft); color: var(--success); }
+.chip.keluar { background: var(--danger-soft);  color: var(--danger); }
+.chip.sisih  { background: var(--primary-soft); color: var(--primary); }
+
+/* ===== JUDUL TANGGAL DI DALAM DAFTAR ===== */
+.date-header {
+  padding: 16px 0 4px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Tombol selebar kartu */
+.btn-block {
+  width: 100%;
+  margin-top: 12px;
+}

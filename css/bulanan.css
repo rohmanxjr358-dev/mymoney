@@ -1,0 +1,98 @@
+/* =====================================================
+   BULANAN.CSS — Halaman Uang Bulanan
+   ===================================================== */
+
+:root {
+  --warning: #b45309;
+  --warning-soft: #fef3c7;
+  --info: #0369a1;
+  --info-soft: #e0f2fe;
+}
+
+/* ===== LABEL STATUS (tepat waktu / terlambat / lebih cepat) ===== */
+.status-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.status-badge.ok    { background: var(--success-soft); color: var(--success); }
+.status-badge.late  { background: var(--warning-soft); color: var(--warning); }
+.status-badge.early { background: var(--info-soft);    color: var(--info); }
+
+.tx-meta .status-badge {
+  margin-left: 4px;
+  padding: 1px 8px;
+  font-size: 11px;
+}
+
+/* ===== RINGKASAN PERIODE BERJALAN ===== */
+.period-hero {
+  margin-top: 12px;
+}
+
+.period-amount {
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.period-sub {
+  margin-top: 2px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* Kotak-kotak angka kecil */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--bg);
+}
+
+.stat span {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.stat strong {
+  font-size: 16px;
+}
+
+.stat small {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.stat small.warn {
+  font-weight: 600;
+  color: var(--warning);
+}
+
+/* ===== FORM SATU BARIS (tanggal kesepakatan) ===== */
+.inline-form {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.inline-form .field {
+  flex: 0 1 180px;
+}
+
+.inline-form .btn {
+  flex: none;
+}

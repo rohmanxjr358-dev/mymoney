@@ -1,0 +1,395 @@
+/* =====================================================
+   DASHBOARD.CSS — Halaman Dashboard
+   ===================================================== */
+
+/* ===== SUSUNAN KARTU ===== */
+.dash-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.dash-grid .card + .card {
+  margin-top: 0;
+}
+
+/* Jarak 16px antar bagian dashboard */
+#page-dashboard > * + * {
+  margin-top: 16px;
+}
+
+.card-sub {
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+/* ===== 1. KARTU SALDO (berwarna) ===== */
+.dash-hero {
+  padding: 22px;
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, #0f766e, #115e59);
+  color: #fff;
+}
+
+.dash-hero-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.dash-greeting {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.dash-hero-label {
+  margin-top: 10px;
+  font-size: 13px;
+  opacity: 0.8;
+}
+
+.dash-hero-value {
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.dash-hero-split {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.dash-hero-split div {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.dash-hero-split span {
+  font-size: 12px;
+  opacity: 0.85;
+}
+
+.dash-hero-split strong {
+  font-size: 16px;
+}
+
+.btn-light {
+  background: #fff;
+  color: var(--primary);
+  white-space: nowrap;
+}
+
+.btn-light:hover {
+  background: var(--primary-soft);
+}
+
+/* ===== 2. UANG AMAN ===== */
+.safe-main {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.safe-big {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 14px;
+  border-radius: 12px;
+  background: var(--bg);
+}
+
+.safe-big span {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.safe-big strong {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.safe-big small {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.safe-big .budget-bar {
+  height: 6px;
+  margin-top: 8px;
+}
+
+.safe-lines {
+  margin-top: 14px;
+  font-size: 14px;
+}
+
+.safe-line {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px dashed var(--border);
+}
+
+.safe-line strong {
+  white-space: nowrap;
+}
+
+.safe-line.total {
+  border-bottom: none;
+  font-weight: 700;
+}
+
+.safe-sub {
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.safe-projection {
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.dash-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.dash-warning .material-symbols-rounded {
+  font-size: 20px;
+}
+
+.dash-warning.late { background: var(--warning-soft); color: var(--warning); }
+.dash-warning.over { background: var(--danger-soft);  color: var(--danger); }
+
+/* ===== 3. EMPAT ANGKA ===== */
+.dash-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.dash-stats .stat {
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.dash-stats .budget-bar {
+  height: 6px;
+  margin-top: 8px;
+}
+
+/* ===== 4. TABUNGAN ===== */
+.dash-funds {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.dash-fund {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  font: inherit;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+}
+
+.dash-fund:hover {
+  border-color: var(--primary);
+}
+
+.dash-fund-info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.dash-fund-info span {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.dash-fund-info strong {
+  font-size: 16px;
+}
+
+/* ===== 5. BATANG PER KATEGORI ===== */
+.cat-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.cat-bar-label {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.cat-bar-label span {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.cat-bar-label strong {
+  white-space: nowrap;
+}
+
+.cat-bar-label small {
+  margin-left: 4px;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.cat-bar {
+  height: 8px;
+  margin-top: 4px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--bg);
+}
+
+.cat-bar span {
+  display: block;
+  height: 100%;
+  border-radius: 4px;
+  background: var(--primary);
+}
+
+.cat-total {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  font-size: 14px;
+}
+
+/* ===== 6. GRAFIK ===== */
+.chart-legend {
+  display: flex;
+  gap: 16px;
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.chart-legend span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+}
+
+.chart-box {
+  position: relative;
+  height: 240px;
+  margin-top: 10px;
+}
+
+.chart-table {
+  margin-top: 10px;
+  font-size: 13px;
+}
+
+.chart-table summary {
+  color: var(--primary);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.chart-table table {
+  width: 100%;
+  margin-top: 8px;
+  border-collapse: collapse;
+}
+
+.chart-table th,
+.chart-table td {
+  padding: 6px 4px;
+  border-bottom: 1px solid var(--border);
+  text-align: right;
+}
+
+.chart-table th:first-child,
+.chart-table td:first-child {
+  text-align: left;
+}
+
+.chart-table th {
+  font-weight: 600;
+  color: var(--muted);
+}
+
+/* ===== TAMPILAN TABLET & HP ===== */
+@media (max-width: 1100px) {
+  .dash-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .dash-grid,
+  .dash-funds {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .dash-hero-value {
+    font-size: 26px;
+  }
+
+  .dash-hero-top .btn-light {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  .safe-main {
+    grid-template-columns: 1fr;
+  }
+
+  .dash-stats {
+    gap: 10px;
+  }
+
+  .dash-stats .stat strong {
+    font-size: 15px;
+  }
+}

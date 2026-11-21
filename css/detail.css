@@ -1,0 +1,74 @@
+/* =====================================================
+   DETAIL.CSS — Isi jendela detail transaksi
+   ===================================================== */
+
+/* Transaksi di daftar bisa diklik */
+#recent-transactions .tx-item,
+#hist-list .tx-item {
+  cursor: pointer;
+}
+
+#recent-transactions .tx-item:hover .tx-category,
+#hist-list .tx-item:hover .tx-category {
+  color: var(--primary);
+}
+
+/* Bagian atas: ikon + nominal besar */
+.detail-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 0 16px;
+  text-align: center;
+}
+
+.detail-hero .tx-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+}
+
+.detail-hero .tx-icon .material-symbols-rounded {
+  font-size: 26px;
+}
+
+.detail-amount {
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.detail-category {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* Kotak keterangan */
+.detail-note {
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--bg);
+}
+
+.detail-label {
+  margin-bottom: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.detail-note-text {
+  font-size: 14px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.detail-note-text em {
+  color: var(--muted);
+}
+
+/* Nilai di daftar info rata kanan & bisa turun baris */
+.info-row strong {
+  text-align: right;
+  overflow-wrap: anywhere;
+}
