@@ -367,7 +367,7 @@
 @media (max-width: 900px) {
   .dash-grid,
   .dash-funds {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -382,7 +382,7 @@
   }
 
   .safe-main {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .dash-stats {

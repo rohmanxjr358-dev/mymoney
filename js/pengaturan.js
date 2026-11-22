@@ -3,7 +3,7 @@
 //                 penyimpanan, hapus semua data, tentang
 // =====================================================
 
-const APP_VERSION = '2.6';
+const APP_VERSION = '2.7';
 
 // Nilai bawaan untuk data lama
 if (appData.settings.backupReminderDays === undefined) {

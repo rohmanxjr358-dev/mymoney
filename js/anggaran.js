@@ -364,6 +364,7 @@ function renderBudgetEditor() {
 // Membagi sisa uang sebanding jumlah hari tiap pekan, dibulatkan ke ribuan.
 function autoFillBudgets() {
   const period = findPeriod(budgetPeriodId);
+  if (!period || !budgetDraft) { renderAnggaran(true); return; }
   const weeks = getPeriodWeeks(period);
   const pool = Math.max(0, getWeeklyPool(period));
   const totalDays = weeks.reduce(function (sum, w) { return sum + w.days; }, 0);

@@ -197,11 +197,20 @@ function renderDashStats() {
         return tx.type === 'keluar' && tx.date >= period.receivedDate && tx.date < period.nextExpectedDate;
       })
       .reduce(function (sum, tx) { return sum + tx.amount; }, 0);
+    // Sisa tidak mungkin lebih besar dari uang yang benar-benar ada di dompet
+    // (misalnya ada pengeluaran sebelum mulai mencatat)
+    const inWallet = getWalletBalance();
+    const capped = available - out > inWallet;
+    const sisa = capped ? inWallet : available - out;
     periodTile = `
       <div class="stat">
         <span>Sisa uang bulanan</span>
-        <strong class="${available - out < 0 ? 'text-danger' : ''}">${signedRupiah(available - out)}</strong>
-        <small>dari ${formatRupiah(available)} (${formatMonthYear(period.receivedDate)})</small>
+        <strong class="${sisa < 0 ? 'text-danger' : ''}">${signedRupiah(sisa)}</strong>
+        <small>${capped
+          ? 'mengikuti uang di dompet'
+          : period.untracked
+            ? 'dihitung sejak mulai mencatat'
+            : 'dari ' + formatRupiah(available) + ' (' + formatMonthYear(period.receivedDate) + ')'}</small>
       </div>
     `;
   }
@@ -211,7 +220,7 @@ function renderDashStats() {
   let weekTile = `
     <div class="stat"><span>Anggaran pekan ini</span><strong>–</strong><small>Belum diatur</small></div>
   `;
-  if (weekInfo && weekInfo.week.available === 0) {
+  if (weekInfo && weekInfo.week.available === 0 && !(period && period.weekBudgets)) {
     weekTile = `
       <div class="stat">
         <span>Anggaran pekan ini</span>
@@ -237,12 +246,12 @@ function renderDashStats() {
   dashStats.innerHTML = `
     <div class="stat">
       <span>Uang masuk ${monthName}</span>
-      <strong class="text-success">+${formatRupiah(totals.masuk)}</strong>
+      <strong class="${totals.masuk ? 'text-success' : ''}">${totals.masuk ? '+' : ''}${formatRupiah(totals.masuk)}</strong>
       <small>Semua pemasukan bulan ini</small>
     </div>
     <div class="stat">
       <span>Uang keluar ${monthName}</span>
-      <strong class="text-danger">−${formatRupiah(totals.keluar)}</strong>
+      <strong class="${totals.keluar ? 'text-danger' : ''}">${totals.keluar ? '−' : ''}${formatRupiah(totals.keluar)}</strong>
       <small>${totals.sisih ? 'Disisihkan ' + formatRupiah(totals.sisih) + ' (tidak termasuk)' : 'Tidak termasuk yang disisihkan'}</small>
     </div>
     ${periodTile}

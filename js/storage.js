@@ -95,7 +95,8 @@ function readAutoBackup(key) {
 }
 
 function rotateAutoBackup(rawData) {
-  const today = new Date().toISOString().slice(0, 10);
+  const now = new Date();   // tanggal lokal (WIB), bukan UTC
+  const today = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
   const latest = readAutoBackup(AUTO_BACKUP_KEYS[0]);
   if (latest && latest.savedOn === today) return;   // hari ini sudah dicadangkan
 

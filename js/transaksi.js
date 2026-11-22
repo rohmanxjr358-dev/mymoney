@@ -53,6 +53,12 @@ function deleteTransaction(id) {
   const tx = findTransaction(id);
   if (!tx) return;
 
+  // Uang bulanan dihapus lewat menunya sendiri supaya periodenya ikut terhapus
+  if (appData.periods && appData.periods.some(function (p) { return p.transactionId === tx.id; })) {
+    showToast('Hapus uang bulanan lewat menu Uang Bulanan');
+    return;
+  }
+
   const category = findCategory(tx.categoryId);
   const name = category ? category.name : 'Transaksi';
 
@@ -67,7 +73,8 @@ function deleteTransaction(id) {
   });
   saveData();
 
-  updateBackupInfo();
+  if (typeof refreshAfterTransactionChange === 'function') refreshAfterTransactionChange();
+  else updateBackupInfo();
   showToast('Transaksi dihapus');
 }
 

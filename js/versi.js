@@ -8,6 +8,15 @@
 
 const CHANGELOG = [
   {
+    version: '2.7',
+    date: 'November 2026',
+    items: [
+      { emoji: '🧮', title: 'Angka Beranda lebih jujur', text: 'Kalau mulai mencatat di tengah bulan, sisa uang & rencana dihitung dari uang yang benar-benar ada di dompet.' },
+      { emoji: '⚠️', title: 'Status "Mepet" yang jelas', text: 'Kalau jatah harian kecil karena uangnya sudah disisihkan untuk tagihan, alasannya langsung ditulis.' },
+      { emoji: '🛠️', title: 'Lebih stabil', text: 'Belasan perbaikan kecil: hapus kategori/dompet lebih aman, tampilan Laporan tidak meluber, dan lainnya.' }
+    ]
+  },
+  {
     version: '2.6',
     date: 'November 2026',
     items: [

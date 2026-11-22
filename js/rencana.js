@@ -27,6 +27,23 @@ function expectsParentTransfer() {
 // Bulan berikutnya meniru rencana bulan sebelumnya. Jika belum pernah ada:
 // wajib bayar diambil dari Tagihan, lalu 10% tabungan + 5% dana darurat + 5% investasi
 // dari sisanya, dan sisanya dibagi rata ke setiap pekan sebagai jatah jajan.
+// ===== MULAI MENCATAT DI TENGAH BULAN =====
+// Kiriman pertama sering sudah terpakai sebagian sebelum MyMoney dipakai.
+// Selisihnya diukur sekali (kiriman − pengeluaran tercatat − saldo dompet sekarang)
+// supaya rencana & "sisa uang bulanan" berpijak pada uang yang benar-benar ada.
+function measureUntracked() {
+  if (appData.periods.length !== 1) return;
+  const p = appData.periods[0];
+  if (p.untracked !== undefined || p.receivedDate > todayString()) return;
+  const out = appData.transactions
+    .filter(function (tx) { return tx.type === 'keluar' && tx.date >= p.receivedDate && tx.date < p.nextExpectedDate; })
+    .reduce(function (sum, tx) { return sum + tx.amount; }, 0);
+  p.untracked = Math.max(0, Math.round(p.amount + (p.carryOver || 0) - out - getWalletBalance()));
+  saveData();
+  if (p.untracked && typeof renderDashboard === 'function') renderDashboard();
+}
+measureUntracked();
+
 function buildAutoPlan(period, previous) {
   let alloc;
 
@@ -162,6 +179,8 @@ function planCardHtml() {
 
   if (!hasPlan) {
     if (appData.settings.planDismissed[period.id]) return '';
+    // Kiriman tinggal sebentar lagi → rencana untuk sisa beberapa hari tidak berguna
+    if (daysBetween(todayString(), period.nextExpectedDate) < 7) return '';
     return `
       <div class="plan-card">
         <div class="transfer-head">
@@ -207,6 +226,24 @@ function planCardHtml() {
 
 
 // ===== 3. STATUS SATU KALIMAT =====
+// Uang yang sudah "dipesan" sebelum kiriman berikutnya
+function reservedTotal(safe) {
+  return safe.wajib.total + safe.bills.total + safe.savings.total;
+}
+
+function reservedText(safe) {
+  const items = []
+    .concat(safe.bills.items.map(function (i) {
+      return { amount: i.amount, label: escapeHtml(i.name) + ' (' + formatShortDate(i.dueDate).replace(/ \d{4}$/, '') + ')' };
+    }))
+    .concat(safe.wajib.items.map(function (i) { return { amount: i.amount, label: escapeHtml(i.name) }; }))
+    .concat(safe.savings.items.map(function (i) { return { amount: i.amount, label: escapeHtml(i.name) }; }));
+  if (items.length === 1) {
+    return `<strong>${formatRupiah(items[0].amount)}</strong> untuk ${items[0].label}`;
+  }
+  return `<strong>${formatRupiah(reservedTotal(safe))}</strong> untuk tagihan & rencana`;
+}
+
 function heroStatusText() {
   const safe = getSafeMoney();
   if (!safe.ready) {
@@ -224,6 +261,9 @@ function heroStatusText() {
   let text;
   if (safe.usable < 0) {
     text = `⚠️ Uangmu <strong>kurang ${formatRupiah(-safe.usable)}</strong> untuk wajib bayar & tagihan.`;
+  } else if (left > 0 && safe.dailyLimit < 10000 && reservedTotal(safe) > 0) {
+    // Jatah kecil karena sebagian uang sudah dipesan untuk tagihan/rencana → jelaskan alasannya
+    text = `⚠️ Mepet. ${reservedText(safe)} sudah disisihkan, jadi hari ini cuma boleh pakai <strong>${formatRupiah(left)}</strong>.`;
   } else if (left > 0) {
     text = (safe.projectedEnough ? '👍 Aman. ' : '🙂 Masih aman, tapi rem sedikit. ') +
       `Hari ini masih boleh pakai <strong>${formatRupiah(left)}</strong>.`;

@@ -68,7 +68,7 @@ function getUnpaidBillsUntil(endDate, period) {
     getBillsForMonth(key).forEach(function (bill) {
       if (wajibIds.includes(bill.categoryId)) return;
       const status = getBillStatus(bill, key);
-      if (status.payment) return;
+      if (status.code === 'lunas') return;   // termasuk yang ditandai "sudah dibayar sebelumnya"
       if (status.dueDate < endDate) {
         items.push({ name: bill.name, amount: bill.amount, dueDate: status.dueDate });
       }

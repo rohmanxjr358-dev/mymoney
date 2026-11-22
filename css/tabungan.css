@@ -140,7 +140,7 @@
 /* ===== TAMPILAN HP ===== */
 @media (max-width: 1100px) {
   .fund-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 

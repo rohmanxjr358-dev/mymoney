@@ -498,6 +498,10 @@ function removeWallet(id, targetId) {
       if (m.to === id) m.to = targetId;
       if (m.walletId === id) m.walletId = targetId;
     });
+    // Tombol kilat & lokasi tabungan ikut pindah ke dompet tujuan
+    (appData.quickTemplates || []).forEach(function (t) { if (t.walletId === id) t.walletId = targetId; });
+    const loc = appData.settings.fundWallet || {};
+    Object.keys(loc).forEach(function (k) { if (loc[k] === id) loc[k] = targetId; });
     // Pindah uang ke dirinya sendiri tidak berarti apa-apa lagi
     appData.walletMoves = appData.walletMoves.filter(function (m) { return !(m.kind === 'transfer' && m.from === m.to); });
   }

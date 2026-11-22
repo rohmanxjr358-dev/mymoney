@@ -102,8 +102,10 @@ function getTimingInfo(period) {
 }
 
 // Uang yang tersedia untuk dibagi = uang diterima + sisa bulan lalu
+// untracked = bagian kiriman yang sudah terpakai sebelum mulai mencatat
+// (diukur sekali di rencana.js), supaya rencana tidak membagi uang yang sudah tidak ada
 function getAvailableMoney(period) {
-  return period.amount + (period.carryOver || 0);
+  return period.amount + (period.carryOver || 0) - (period.untracked || 0);
 }
 
 
@@ -330,7 +332,9 @@ function renderCurrentPeriod() {
       <div class="stat">
         <span>Uang tersedia untuk dibagi</span>
         <strong>${formatRupiah(getAvailableMoney(period))}</strong>
-        <small>${period.carryOver ? 'Termasuk sisa bulan lalu ' + formatRupiah(period.carryOver) : 'Tanpa sisa bulan lalu'}</small>
+        <small>${period.untracked
+          ? formatRupiah(period.untracked) + ' sudah terpakai sebelum mulai mencatat'
+          : period.carryOver ? 'Termasuk sisa bulan lalu ' + formatRupiah(period.carryOver) : 'Tanpa sisa bulan lalu'}</small>
       </div>
       <div class="stat">
         <span>Perkiraan transfer berikutnya</span>

@@ -82,6 +82,9 @@ function openOnboarding() {
 
   onboardEl.addEventListener('click', onOnboardClick);
   onboardEl.addEventListener('change', onOnboardInput);
+  onboardEl.addEventListener('input', function (event) {
+    if (event.target.id === 'ob-house-day') onOnboardInput(event);   // centang "sudah dibayar" langsung terlihat
+  });
   renderOnboardStep();
 }
 
@@ -496,6 +499,17 @@ function onOnboardClick(event) {
 }
 
 function onOnboardInput(event) {
+  // Tanggal bayar sudah lewat bulan ini → kemungkinan besar sudah dibayar; centang otomatis
+  // (selama pengguna belum menyentuh centangnya sendiri)
+  if (event.target.id === 'ob-house-paid') onboard.housingPaidTouched = true;
+  if (event.target.id === 'ob-house-day' && !onboard.housingPaidTouched) {
+    const day = Number(event.target.value);
+    const box = document.getElementById('ob-house-paid');
+    if (box && day >= 1 && day <= 31) {
+      box.checked = day < new Date().getDate();
+      onboard.housingPaid = box.checked;
+    }
+  }
   if (event.target.id === 'ob-received') {
     readOnboardInputs();
     onboard.received = event.target.checked;

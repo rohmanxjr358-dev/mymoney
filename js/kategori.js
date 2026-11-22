@@ -51,6 +51,7 @@ function refreshCategoryViews() {
 
   renderRecentTransactions();
   updateBackupInfo();
+  if (typeof renderQuickAll === 'function') renderQuickAll();   // nama kategori di tombol kilat
 }
 
 
@@ -177,9 +178,16 @@ function deleteCategory(id) {
   }
   if (!confirm(message)) return;
 
-  // Pindahkan transaksi yang memakai kategori ini
+  // Pindahkan transaksi — dan semua yang merujuk kategori ini — ke kategori cadangan
   appData.transactions.forEach(function (tx) {
     if (tx.categoryId === id) tx.categoryId = fallbackId;
+  });
+  (appData.quickTemplates || []).forEach(function (t) { if (t.categoryId === id) t.categoryId = fallbackId; });
+  (appData.bills || []).forEach(function (b) { if (b.categoryId === id) b.categoryId = fallbackId; });
+  (appData.periods || []).forEach(function (p) {
+    if (p.allocations && p.allocations.wajib) {
+      p.allocations.wajib.forEach(function (w) { if (w.categoryId === id) w.categoryId = fallbackId; });
+    }
   });
 
   // Hapus kategorinya
