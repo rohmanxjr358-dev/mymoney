@@ -241,7 +241,7 @@ body.onboarding-open {
 .onboard-card.active {
   border-color: #60a5fa;
   background: rgba(59, 130, 246, 0.18);
-  transform: scale(1.02);
+  box-shadow: inset 0 0 0 1px #60a5fa;   /* garis tebal tanpa keluar dari kotak */
 }
 
 .onboard-extra {
@@ -356,7 +356,7 @@ body.onboarding-open {
   border-color: var(--wc);
   background: color-mix(in srgb, var(--wc) 22%, transparent);
   color: #fff;
-  transform: scale(1.04);
+  box-shadow: inset 0 0 0 1px var(--wc);
 }
 
 .onboard-brand.active::after {
