@@ -55,6 +55,16 @@ function getBillPayment(bill, key) {
   }) || null;
 }
 
+function isBillSettled(bill, key) {
+  return Array.isArray(bill.settled) && bill.settled.includes(key);
+}
+
+function setBillSettled(bill, key, on) {
+  const list = Array.isArray(bill.settled) ? bill.settled.filter(function (k) { return k !== key; }) : [];
+  if (on) list.push(key);
+  bill.settled = list;
+}
+
 function getBillStatus(bill, key) {
   const ym = keyToYearMonth(key);
   const dueDate = makeDate(ym.year, ym.month, bill.dueDay);
@@ -62,6 +72,10 @@ function getBillStatus(bill, key) {
 
   if (payment) {
     return { code: 'lunas', label: 'Lunas', cls: 'ok', dueDate: dueDate, payment: payment };
+  }
+  // Ditandai lunas tanpa transaksi (dibayar sebelum mulai mencatat)
+  if (isBillSettled(bill, key)) {
+    return { code: 'lunas', label: 'Lunas', cls: 'ok', dueDate: dueDate, settled: true };
   }
 
   const diff = daysBetween(todayString(), dueDate);   // negatif = sudah lewat
@@ -134,10 +148,14 @@ function renderBillMonth() {
     const status = getBillStatus(bill, key);
     const amount = status.payment ? status.payment.amount : bill.amount;
     total += amount;
-    if (status.payment) paid += amount;
+    if (status.code === 'lunas') paid += amount;
 
     const category = findCategory(bill.categoryId);
-    const action = status.payment
+    const action = status.settled
+      ? `<button type="button" class="btn btn-secondary btn-sm" data-bill-unsettle="${bill.id}">
+           <span class="material-symbols-rounded">undo</span> Batalkan
+         </button>`
+      : status.payment
       ? `<button type="button" class="btn btn-secondary btn-sm" data-bill-unpay="${status.payment.id}">
            <span class="material-symbols-rounded">undo</span> Batalkan
          </button>`
@@ -159,6 +177,7 @@ function renderBillMonth() {
           <div class="bill-status-line">
             <span class="status-badge ${status.cls}">${status.label}</span>
             ${status.payment ? `<span class="bill-paid-on">dibayar ${formatShortDate(status.payment.date)}</span>` : ''}
+            ${status.settled ? '<span class="bill-paid-on">sudah dibayar sebelumnya</span>' : ''}
           </div>
         </div>
         <div class="tx-right">
@@ -373,6 +392,12 @@ function openPayForm(billId, key) {
           <span class="material-symbols-rounded">payments</span> Tandai Lunas
         </button>
       </div>
+      <div class="bill-settle-box">
+        <p>Sudah bayar <strong>sebelum mulai pakai MyMoney</strong>? Saldo dompetmu sudah terpotong, jadi cukup tandai lunas tanpa mencatat pengeluaran lagi.</p>
+        <button type="button" class="btn btn-secondary btn-block" data-bill-settle="${bill.id}" data-month="${key}">
+          <span class="material-symbols-rounded">task_alt</span> Sudah dibayar sebelumnya
+        </button>
+      </div>
     </form>
   `;
   billModal.classList.add('open');
@@ -495,6 +520,18 @@ billMonthCard.addEventListener('click', function (event) {
     return;
   }
 
+  const unsettle = event.target.closest('[data-bill-unsettle]');
+  if (unsettle) {
+    const bill = findBill(unsettle.dataset.billUnsettle);
+    if (bill) {
+      setBillSettled(bill, monthKey(billViewYear, billViewMonth), false);
+      saveData();
+      renderTagihan();
+      showToast('Tanda lunas dibatalkan');
+    }
+    return;
+  }
+
   const unpay = event.target.closest('[data-bill-unpay]');
   if (unpay) {
     deleteTransaction(unpay.dataset.billUnpay);   // menampilkan konfirmasi
@@ -511,6 +548,18 @@ billListCard.addEventListener('click', function (event) {
 
   const del = event.target.closest('[data-bill-delete]');
   if (del) deleteBill(del.dataset.billDelete);
+});
+
+billModalBody.addEventListener('click', function (event) {
+  const settle = event.target.closest('[data-bill-settle]');
+  if (!settle) return;
+  const bill = findBill(settle.dataset.billSettle);
+  if (!bill) return;
+  setBillSettled(bill, settle.dataset.month, true);
+  saveData();
+  closeBillModal();
+  renderTagihan();
+  showToast(bill.name + ' ' + monthLabel(settle.dataset.month) + ' ditandai lunas');
 });
 
 billModalBody.addEventListener('submit', function (event) {

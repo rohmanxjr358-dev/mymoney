@@ -50,6 +50,7 @@ const onboard = {
   housing: '',
   housingAmount: '',
   housingDay: '',
+  housingPaid: false,
   wallets: { tunai: '' },        // merek → saldo (teks)
   habits: ['jajan'],
   incomes: ['ortu'],
@@ -157,7 +158,11 @@ function stepHousing() {
         <div class="onboard-day"><span>Tgl</span>
           <input type="number" id="ob-house-day" inputmode="numeric" min="1" max="31" placeholder="1" value="${onboard.housingDay}"></div>
       </div>
-      <small>Akan jadi pengingat tagihan bulanan otomatis.</small>
+      <label class="onboard-toggle onboard-paid">
+        <input type="checkbox" id="ob-house-paid" ${onboard.housingPaid ? 'checked' : ''}>
+        <span>Bulan ini <strong>sudah dibayar</strong></span>
+      </label>
+      <small>Akan jadi pengingat tagihan bulanan otomatis. Kalau sudah dibayar, pengingat baru muncul bulan depan.</small>
     </div>` : '';
 
   return `
@@ -289,6 +294,8 @@ function readOnboardInputs() {
   if (v('ob-name') !== null) onboard.name = v('ob-name').trim();
   if (v('ob-house-amount') !== null) onboard.housingAmount = v('ob-house-amount');
   if (v('ob-house-day') !== null) onboard.housingDay = v('ob-house-day');
+  const housePaid = document.getElementById('ob-house-paid');
+  if (housePaid) onboard.housingPaid = housePaid.checked;
   if (v('ob-transfer-day') !== null) onboard.transferDay = v('ob-transfer-day');
   if (v('ob-received-amount') !== null) onboard.receivedAmount = v('ob-received-amount');
   if (v('ob-received-date') !== null) onboard.receivedDate = v('ob-received-date') || todayString();
@@ -349,7 +356,8 @@ function applyOnboarding() {
       name: onboard.housing === 'kos' ? 'Sewa Kos' : 'Iuran Kontrakan',
       amount: houseAmount, dueDay: houseDay,
       categoryId: onboard.housing === 'kos' ? 'out-kos' : 'out-iuran',
-      remindDays: 3, note: '', active: true, startMonth: currentMonthKey(), createdAt: now
+      remindDays: 3, note: '', active: true, startMonth: currentMonthKey(), createdAt: now,
+      settled: onboard.housingPaid ? [currentMonthKey()] : []
     });
   }
 

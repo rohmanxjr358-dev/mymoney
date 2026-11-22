@@ -307,3 +307,19 @@ body {
     font-size: 22px;
   }
 }
+
+/* ===== TAMPILAN TERKUNCI (tanpa zoom) ===== */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  touch-action: manipulation;   /* matikan ketuk-dua-kali untuk zoom */
+}
+
+/* Kolom isian minimal 16px: iPhone otomatis memperbesar layar jika lebih kecil */
+@media (max-width: 768px) {
+  html body .mini-select,
+  html body .fund-loc-row select,
+  html body .onboard-row.even .onboard-date {
+    font-size: 16px;
+  }
+}

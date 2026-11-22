@@ -127,3 +127,16 @@
     left: calc(50% + 6px);
   }
 }
+
+/* Tandai lunas tanpa mencatat pengeluaran */
+.bill-settle-box {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--border);
+}
+.bill-settle-box p {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0 0 10px;
+  line-height: 1.5;
+}

@@ -659,3 +659,7 @@ body.onboarding-open {
     animation: none;
   }
 }
+
+.onboard-paid {
+  margin: 12px 0 6px;
+}

@@ -8,6 +8,14 @@
 
 const CHANGELOG = [
   {
+    version: '2.6',
+    date: 'November 2026',
+    items: [
+      { emoji: '✅', title: 'Tagihan yang sudah dibayar', text: 'Sudah bayar iuran/kos sebelum mulai pakai MyMoney? Buka Tagihan → Bayar → "Sudah dibayar sebelumnya". Pengingatnya hilang tanpa memotong saldo lagi.' },
+      { emoji: '📱', title: 'Tampilan terkunci', text: 'Layar tidak lagi ikut membesar saat dicubit, diketuk dua kali, atau saat mengetik.' }
+    ]
+  },
+  {
     version: '2.5',
     date: 'November 2026',
     items: [
