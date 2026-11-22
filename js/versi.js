@@ -8,6 +8,15 @@
 
 const CHANGELOG = [
   {
+    version: '2.8',
+    date: 'November 2026',
+    items: [
+      { emoji: '↩️', title: 'Tombol Kembali', text: 'Di Android, tombol Kembali menutup jendela yang terbuka atau balik ke Beranda — tidak langsung keluar.' },
+      { emoji: '🌅', title: 'Ganti hari otomatis', text: 'Lewat tengah malam, tanggal dan jatah hari ini langsung diperbarui tanpa perlu menutup aplikasi.' },
+      { emoji: '📲', title: 'Ajakan pasang ke layar utama', text: 'Kalau MyMoney dibuka lewat browser, ada petunjuk memasangnya supaya catatan tidak terhapus otomatis.' }
+    ]
+  },
+  {
     version: '2.7',
     date: 'November 2026',
     items: [

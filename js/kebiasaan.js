@@ -81,6 +81,7 @@ function renderDashNudge() {
 
   // Urutan prioritas slot: kiriman masuk → rencana bulan ini → pengingat catat → rekap
   const priority = (typeof transferCardHtml === 'function' && transferCardHtml()) ||
+                   (typeof installCardHtml === 'function' && installCardHtml()) ||
                    (typeof planCardHtml === 'function' && planCardHtml()) ||
                    (typeof pinOfferHtml === 'function' && pinOfferHtml());
   if (priority) {
