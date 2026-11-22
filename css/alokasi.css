@@ -185,7 +185,7 @@
 
 .seg-wajib { background: #d97706; }
 .seg-sisih { background: var(--primary); }
-.seg-sisa  { background: #38bdf8; }
+.seg-sisa  { background: #0d9488; }
 
 .alloc-lines {
   display: flex;

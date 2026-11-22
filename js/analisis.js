@@ -18,7 +18,8 @@ const SAVING_TIPS = {
   'out-pakaian': 'Tunda pembelian pakaian yang bukan kebutuhan; tunggu beberapa hari sebelum memutuskan.',
   'out-hiburan': 'Pilih hiburan yang gratis atau murah, dan hentikan langganan yang jarang dipakai.',
   'out-nongkrong': 'Batasi nongkrong menjadi beberapa kali sebulan, atau pilih tempat yang lebih hemat.',
-  'out-rawat': 'Habiskan produk perawatan yang sudah ada sebelum membeli yang baru.'
+  'out-rawat': 'Habiskan produk perawatan yang sudah ada sebelum membeli yang baru.',
+  'out-rokok': 'Coba tetapkan batas pembelian per pekan dan kurangi sedikit demi sedikit — lebih hemat dan lebih baik untuk kesehatan.'
 };
 const DEFAULT_TIP = 'Tinjau kembali transaksi di kategori ini dan tetapkan batas pengeluaran bulanan.';
 

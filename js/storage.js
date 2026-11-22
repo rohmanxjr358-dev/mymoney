@@ -45,6 +45,7 @@ const DEFAULT_CATEGORIES = [
   { id: 'out-kesehatan', name: 'Kesehatan',                 type: 'keluar', group: 'Kebutuhan Pribadi' },
   { id: 'out-hiburan',   name: 'Hiburan',                   type: 'keluar', group: 'Kebutuhan Pribadi' },
   { id: 'out-nongkrong', name: 'Nongkrong',                 type: 'keluar', group: 'Kebutuhan Pribadi' },
+  { id: 'out-rokok',     name: 'Rokok',                     type: 'keluar', group: 'Kebutuhan Pribadi' },
 
   // --- F. Keuangan (menyisihkan uang, BUKAN pengeluaran habis pakai) ---
   { id: 'out-tabungan',  name: 'Tabungan Pribadi',          type: 'keluar', group: 'Keuangan', fund: 'tabungan' },
@@ -122,6 +123,33 @@ function getCategories(type) {
 
 // ===== MULAI: muat data saat aplikasi dibuka =====
 let appData = loadData();
+
+// ===== PEMBARUAN DATA LAMA =====
+// Kategori bawaan yang ditambahkan SETELAH aplikasi pertama kali dipakai
+// tidak otomatis ada di data lama, jadi ditambahkan di sini (hanya sekali).
+const NEW_DEFAULT_CATEGORIES = [
+  { version: 2, id: 'out-rokok', after: 'out-nongkrong' }
+];
+
+NEW_DEFAULT_CATEGORIES.forEach(function (item) {
+  if ((appData.settings.categoryVersion || 1) >= item.version) return;
+
+  const exists = appData.categories.some(function (cat) { return cat.id === item.id; });
+  if (!exists) {
+    const base = DEFAULT_CATEGORIES.find(function (cat) { return cat.id === item.id; });
+    const newCategory = {
+      id: base.id, name: base.name, type: base.type,
+      group: base.group, fund: base.fund || null, isDefault: true
+    };
+
+    // Letakkan tepat setelah kategori tertentu (jika masih ada)
+    const index = appData.categories.findIndex(function (cat) { return cat.id === item.after; });
+    if (index >= 0) appData.categories.splice(index + 1, 0, newCategory);
+    else appData.categories.push(newCategory);
+  }
+  appData.settings.categoryVersion = item.version;
+});
+
 saveData();
 
 // Minta browser agar tidak menghapus data ini secara otomatis

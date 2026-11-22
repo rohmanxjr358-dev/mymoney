@@ -1,0 +1,191 @@
+/* =====================================================
+   ANIMASI.CSS — Warna yang bergerak & efek halus
+   Hapus baris pemanggil file ini di index.html untuk
+   mematikan semua animasi.
+   ===================================================== */
+
+/* ===== GERAKAN DASAR (dipakai berulang) ===== */
+
+/* Gradasi bergeser kiri ↔ kanan */
+@keyframes gradientShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Kilau cahaya menyapu dari kiri ke kanan */
+@keyframes shine {
+  0%        { transform: translateX(-120%); }
+  45%, 100% { transform: translateX(120%); }
+}
+
+/* Muncul dari bawah */
+@keyframes riseIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* Bar tumbuh dari kiri */
+@keyframes barGrow {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+/* Berdenyut pelan */
+@keyframes softPulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.15); }
+}
+
+/* Berkedip halus */
+@keyframes softBlink {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.6; }
+}
+
+
+/* ===== 1. KARTU SALDO DASHBOARD ===== */
+.dash-hero {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(120deg, #1e3a8a, #1d4ed8, #2563eb, #4f46e5, #1e3a8a);
+  background-size: 300% 300%;
+  animation: gradientShift 14s ease infinite;
+}
+
+.dash-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.16) 45%, transparent 60%);
+  pointer-events: none;
+  animation: shine 7s ease-in-out infinite;
+}
+
+.dash-hero > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Saat halaman dibuka: muncul dari bawah SEKALIGUS gradasi bergerak */
+#page-dashboard.active > .dash-hero {
+  animation: riseIn 0.45s ease both, gradientShift 14s ease infinite;
+}
+
+.dash-hero-value {
+  animation: riseIn 0.6s ease 0.15s both;
+}
+
+
+/* ===== 2. JUDUL HALAMAN (teks bergradasi) ===== */
+#page-title {
+  background: linear-gradient(90deg, #1e3a8a, #1d4ed8, #4f46e5, #1d4ed8, #1e3a8a);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gradientShift 10s linear infinite;
+}
+
+
+/* ===== 3. LOGO "M" ===== */
+.brand-logo {
+  background: linear-gradient(135deg, #1e3a8a, #1d4ed8, #4f46e5, #2563eb);
+  background-size: 250% 250%;
+  animation: gradientShift 8s ease infinite;
+}
+
+
+/* ===== 4. MENU AKTIF ===== */
+.nav-item.active,
+.more-item.active {
+  background: linear-gradient(120deg, var(--primary-soft), #e0e7ff, var(--primary-soft));
+  background-size: 200% 200%;
+  animation: gradientShift 6s ease infinite;
+}
+
+
+/* ===== 5. KARTU MUNCUL BERGANTIAN SAAT PINDAH HALAMAN ===== */
+.page.active > *,
+.tab-panel.active > * {
+  animation: riseIn 0.45s ease both;
+}
+
+.page.active > *:nth-child(2), .tab-panel.active > *:nth-child(2) { animation-delay: 0.05s; }
+.page.active > *:nth-child(3), .tab-panel.active > *:nth-child(3) { animation-delay: 0.10s; }
+.page.active > *:nth-child(4), .tab-panel.active > *:nth-child(4) { animation-delay: 0.15s; }
+.page.active > *:nth-child(5) { animation-delay: 0.20s; }
+.page.active > *:nth-child(6) { animation-delay: 0.25s; }
+.page.active > *:nth-child(7) { animation-delay: 0.30s; }
+.page.active > *:nth-child(8) { animation-delay: 0.35s; }
+
+
+/* ===== 6. BAR PROGRES TUMBUH ===== */
+/* Hanya di bagian yang tidak berubah saat mengetik, agar tidak "berkedip" */
+#page-dashboard .budget-bar span,
+#page-dashboard .mini-bar span,
+#budget-current .budget-bar span,
+#page-tabungan .mini-bar span,
+.cat-bar span {
+  transform-origin: left center;
+  animation: barGrow 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+
+/* ===== 7. TOMBOL UTAMA ===== */
+.btn-primary {
+  background-color: var(--primary);
+  background-image: linear-gradient(120deg, var(--primary) 0%, #4f46e5 50%, var(--primary) 100%);
+  background-size: 200% 100%;
+  background-position: 0% 0;
+  transition: background-position 0.5s ease, transform 0.12s ease;
+}
+
+.btn-primary:hover {
+  background-color: #1e40af;
+  background-image: linear-gradient(120deg, var(--primary) 0%, #4f46e5 50%, var(--primary) 100%);
+  background-position: 100% 0;
+}
+
+.btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+
+/* ===== 8. IKON PENGINGAT BERDENYUT ===== */
+.reminder-item > .material-symbols-rounded:first-child {
+  animation: softPulse 2.2s ease-in-out infinite;
+}
+
+
+/* ===== 9. LABEL "MELEBIHI" BERKEDIP HALUS ===== */
+.status-badge.over {
+  animation: softBlink 2.4s ease-in-out infinite;
+}
+
+
+/* ===== PENGAMAN ===== */
+
+/* Mode "Kurangi gerakan" di HP/laptop → animasi dimatikan */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* Saat dicetak / disimpan PDF → tanpa animasi, judul tetap terbaca */
+@media print {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+  }
+
+  #page-title {
+    background: none;
+    color: #000;
+  }
+}
