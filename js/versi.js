@@ -13,7 +13,8 @@ const CHANGELOG = [
     items: [
       { emoji: '↩️', title: 'Tombol Kembali', text: 'Di Android, tombol Kembali menutup jendela yang terbuka atau balik ke Beranda — tidak langsung keluar.' },
       { emoji: '🌅', title: 'Ganti hari otomatis', text: 'Lewat tengah malam, tanggal dan jatah hari ini langsung diperbarui tanpa perlu menutup aplikasi.' },
-      { emoji: '📲', title: 'Ajakan pasang ke layar utama', text: 'Kalau MyMoney dibuka lewat browser, ada petunjuk memasangnya supaya catatan tidak terhapus otomatis.' }
+      { emoji: '📲', title: 'Ajakan pasang ke layar utama', text: 'Kalau MyMoney dibuka lewat browser, ada petunjuk memasangnya supaya catatan tidak terhapus otomatis.' },
+      { emoji: '🛡️', title: 'Anti salah ketik', text: 'Nominal di atas Rp10 juta, tanggal yang belum terjadi, dan bayar utang melebihi sisanya akan ditanyakan dulu.' }
     ]
   },
   {

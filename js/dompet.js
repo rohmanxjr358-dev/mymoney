@@ -578,6 +578,7 @@ function saveTransferForm() {
 
   if (from === to) { showToast('Dompet asal dan tujuan harus berbeda'); return; }
   if (!amount || amount <= 0) { showToast('Isi nominal'); return; }
+  if (!confirmAmount(amount + fee) || !confirmFutureDate(date)) return;
 
   const now = new Date().toISOString();
   const move = {

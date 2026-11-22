@@ -332,6 +332,7 @@ function saveQuickForm(event) {
   if (!label) { showToast('Isi nama tombol'); return; }
   if (!amount || amount <= 0) { showToast('Isi nominal'); return; }
   if (!categoryId) { showToast('Pilih kategori'); return; }
+  if (!confirmAmount(amount)) return;
 
   if (quickEditingId) {
     Object.assign(findQuickTemplate(quickEditingId), { label: label, amount: amount, categoryId: categoryId, emoji: emoji, walletId: walletId });

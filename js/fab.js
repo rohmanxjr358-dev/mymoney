@@ -169,6 +169,7 @@ function saveFab() {
   const amount = Math.round(Number(d.amount));
   if (!amount || amount <= 0) { showToast('Isi nominal'); document.getElementById('fab-amount').focus(); return; }
   if (!d.categoryId) { showToast('Pilih kategori'); return; }
+  if (!confirmAmount(amount) || !confirmFutureDate(d.date)) return;
 
   const data = {
     type: d.type,

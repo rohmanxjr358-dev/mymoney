@@ -455,6 +455,7 @@ function savePayForm(form) {
 
   if (!amount) { showToast('Isi nominal pembayaran'); return; }
   if (!date) { showToast('Isi tanggal bayar'); return; }
+  if (!confirmAmount(amount) || !confirmFutureDate(date)) return;
 
   appData.transactions.push({
     id: generateId(),

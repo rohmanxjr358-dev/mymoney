@@ -430,6 +430,7 @@ function saveDebtForm(form) {
 
   if (!person) { showToast('Isi nama teman'); return; }
   if (!amount || amount <= 0) { showToast('Isi nominal'); return; }
+  if (!confirmAmount(amount)) return;
 
   const data = {
     dir: document.getElementById('df-dir').value,
@@ -578,6 +579,9 @@ function addDebtPayment(id, amount, date) {
   const remaining = debtRemaining(debt);
   const value = Math.min(remaining, Math.round(amount));
   if (!value || value <= 0) { showToast('Isi nominal pembayaran'); return; }
+  // Bayar melebihi sisa → yang dicatat hanya sisanya (beri tahu, jangan diam-diam)
+  const excess = Math.round(amount) - remaining;
+  if (excess > 0 && !confirm('Sisa utangnya hanya ' + formatRupiah(remaining) + '.\n\nYang dicatat ' + formatRupiah(remaining) + ' (lunas). Lanjutkan?')) return;
 
   debt.payments = debt.payments || [];
   debt.payments.push({ id: generateId(), amount: value, date: date || todayString() });

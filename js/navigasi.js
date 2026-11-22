@@ -153,3 +153,49 @@ document.addEventListener('click', function (event) {
 });
 
 if (typeof renderDashNudge === 'function') renderDashNudge();
+
+
+// ===== 4. DUA TAB / JENDELA SEKALIGUS =====
+// Jika data diubah di tab lain, tab ini memuat ulang supaya tidak menimpa catatan baru
+// dengan data lamanya. Saat sedang mengisi form, pemuatan ulang ditunda sampai form ditutup.
+let reloadFromOtherTab = false;
+
+function isBusy() {
+  return Boolean(document.querySelector('.modal.open, #fab-modal.open, .onboard, #recap.open')) ||
+    document.documentElement.classList.contains('pin-open');
+}
+
+function reloadIfOtherTabChanged() {
+  if (reloadFromOtherTab && !isBusy()) location.reload();
+}
+
+window.addEventListener('storage', function (event) {
+  if (event.key !== STORAGE_KEY) return;
+  reloadFromOtherTab = true;
+  if (isBusy()) showToast('Data diperbarui di tab lain — dimuat ulang setelah form ditutup');
+  reloadIfOtherTabChanged();
+});
+setInterval(reloadIfOtherTabChanged, 1500);
+
+// Pengaman terakhir: menyimpan saat tab lain baru saja mengubah data →
+// gabungkan dulu catatan dari tab lain (berdasarkan id) supaya tidak ada yang hilang.
+function mergeFromStorage() {
+  let stored;
+  try { stored = JSON.parse(localStorage.getItem(STORAGE_KEY)); } catch (e) { return; }
+  if (!stored) return;
+  Object.keys(stored).forEach(function (key) {
+    const theirs = stored[key];
+    const mine = appData[key];
+    if (!Array.isArray(theirs) || !Array.isArray(mine)) return;
+    const ids = new Set(mine.map(function (x) { return x && x.id; }));
+    theirs.forEach(function (item) {
+      if (item && item.id && !ids.has(item.id)) mine.push(item);
+    });
+  });
+}
+
+const originalSaveData = saveData;
+saveData = function () {
+  if (reloadFromOtherTab) mergeFromStorage();
+  originalSaveData();
+};

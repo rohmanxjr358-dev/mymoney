@@ -373,6 +373,7 @@ function saveFundForm(form) {
     return;
   }
 
+  if (!confirmAmount(amount) || !confirmFutureDate(date)) return;
   const now = new Date().toISOString();
 
   if (mode === 'setor') {

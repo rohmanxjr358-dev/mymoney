@@ -42,6 +42,22 @@ function findTransaction(id) {
 }
 
 
+// ===== CEGAH SALAH KETIK =====
+// Nominal sangat besar (kemungkinan kelebihan nol) dan tanggal yang belum terjadi
+// minta konfirmasi dulu, karena keduanya langsung mengubah saldo.
+const AMOUNT_WARN_LIMIT = 10000000;
+
+function confirmAmount(amount) {
+  if (amount <= AMOUNT_WARN_LIMIT) return true;
+  return confirm('Nominal ' + formatRupiah(amount) + ' — sudah benar?\n\nCek lagi, mungkin ada angka nol yang berlebih.');
+}
+
+function confirmFutureDate(date) {
+  if (!date || date <= todayString()) return true;
+  return confirm('Tanggal ' + formatShortDate(date) + ' belum terjadi.\n\nSaldo langsung berubah sejak sekarang. Tetap simpan?');
+}
+
+
 // ===== UBAH TRANSAKSI → buka form ➕ dalam mode ubah =====
 function startEdit(id) {
   openFab({ editId: id });
