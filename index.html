@@ -23,6 +23,8 @@
       try {
         var settings = (JSON.parse(localStorage.getItem('mymoney-data')) || {}).settings || {};
         theme = settings.theme || 'dark';
+        // PIN aktif → sembunyikan isi aplikasi sejak awal (sebelum layar PIN siap)
+        if (settings.pin && settings.pin.hash) document.documentElement.classList.add('pin-locked');
       } catch (e) {}
       if (theme === 'auto') {
         theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
@@ -57,6 +59,12 @@
   <link rel="stylesheet" href="css/utang.css">
   <link rel="stylesheet" href="css/kalender.css">
   <link rel="stylesheet" href="css/rekap.css">
+  <link rel="stylesheet" href="css/dompet.css">
+  <link rel="stylesheet" href="css/fab.css">
+  <link rel="stylesheet" href="css/onboarding.css">
+  <link rel="stylesheet" href="css/kebiasaan.css">
+  <link rel="stylesheet" href="css/rencana.css">
+  <link rel="stylesheet" href="css/pin.css">
 
   <!-- Animasi warna & efek halus (hapus baris ini untuk mematikan semua animasi) -->
   <link rel="stylesheet" href="css/animasi.css">
@@ -80,15 +88,15 @@
       <nav class="nav">
         <button class="nav-item" data-page="dashboard">
           <span class="material-symbols-rounded">space_dashboard</span>
-          <span class="nav-label">Dashboard</span>
+          <span class="nav-label">Beranda</span>
         </button>
         <button class="nav-item" data-page="transaksi">
           <span class="material-symbols-rounded">receipt_long</span>
-          <span class="nav-label">Transaksi</span>
+          <span class="nav-label">Riwayat</span>
         </button>
-        <button class="nav-item" data-page="anggaran">
-          <span class="material-symbols-rounded">calendar_view_week</span>
-          <span class="nav-label">Anggaran Mingguan</span>
+        <button class="nav-item" data-page="laporan">
+          <span class="material-symbols-rounded">bar_chart</span>
+          <span class="nav-label">Laporan</span>
         </button>
         <button class="nav-item desktop-only" data-page="bulanan">
           <span class="material-symbols-rounded">account_balance_wallet</span>
@@ -98,6 +106,10 @@
           <span class="material-symbols-rounded">savings</span>
           <span class="nav-label">Tabungan</span>
         </button>
+        <button class="nav-item desktop-only" data-page="anggaran">
+          <span class="material-symbols-rounded">calendar_view_week</span>
+          <span class="nav-label">Anggaran Mingguan</span>
+        </button>
         <button class="nav-item desktop-only" data-page="tagihan">
           <span class="material-symbols-rounded">event</span>
           <span class="nav-label">Tagihan</span>
@@ -105,10 +117,6 @@
         <button class="nav-item desktop-only" data-page="utang">
           <span class="material-symbols-rounded">handshake</span>
           <span class="nav-label">Utang &amp; Patungan</span>
-        </button>
-        <button class="nav-item desktop-only" data-page="laporan">
-          <span class="material-symbols-rounded">bar_chart</span>
-          <span class="nav-label">Laporan</span>
         </button>
         <button class="nav-item desktop-only" data-page="pengaturan">
           <span class="material-symbols-rounded">settings</span>
@@ -139,11 +147,13 @@
       <!-- ===== HALAMAN DASHBOARD (diisi oleh dashboard.js) ===== -->
       <section class="page" id="page-dashboard">
         <div class="dash-hero" id="dash-hero"></div>
-        <div id="dash-recap"></div>
+        <div id="dash-nudge"></div>
+        <div class="card" id="dash-wallets"></div>
         <div class="card quick-card" id="dash-quick"></div>
+        <div id="dash-unlock"></div>
         <div class="dash-stats" id="dash-stats"></div>
         <div class="card" id="dash-safe"></div>
-        <div class="card" id="dash-analysis"></div>
+        <div class="card" id="dash-analysis" hidden></div>
         <div class="dash-funds" id="dash-funds"></div>
         <div id="dash-debt"></div>
         <div class="dash-grid">
@@ -156,109 +166,8 @@
       <!-- ===== HALAMAN TRANSAKSI ===== -->
       <section class="page" id="page-transaksi">
 
-        <!-- Tab: Catat / Riwayat -->
-        <div class="tabs" id="tx-tabs">
-          <button type="button" class="tab active" data-tab="catat">
-            <span class="material-symbols-rounded">edit_note</span>
-            Catat
-          </button>
-          <button type="button" class="tab" data-tab="riwayat">
-            <span class="material-symbols-rounded">history</span>
-            Riwayat
-          </button>
-          <button type="button" class="tab" data-tab="kalender">
-            <span class="material-symbols-rounded">calendar_month</span>
-            Kalender
-          </button>
-        </div>
-
         <!-- ===== TAB CATAT ===== -->
-        <div class="tab-panel active" id="tab-catat">
-          <!-- Catat Kilat (diisi oleh cepat.js) -->
-          <div class="card quick-card" id="tx-quick"></div>
-
-          <div class="card">
-            <h2 class="card-title" id="form-title">Catat Transaksi</h2>
-
-            <form id="transaction-form" novalidate>
-              <!-- Pilihan jenis transaksi -->
-              <div class="segmented">
-                <button type="button" class="segmented-btn active" data-type="keluar">
-                  <span class="material-symbols-rounded">north_east</span>
-                  Uang Keluar
-                </button>
-                <button type="button" class="segmented-btn" data-type="masuk">
-                  <span class="material-symbols-rounded">south_west</span>
-                  Uang Masuk
-                </button>
-              </div>
-
-              <div class="form-grid">
-                <div class="field field-full">
-                  <label for="tx-amount">Nominal</label>
-                  <div class="input-prefix">
-                    <span>Rp</span>
-                    <input type="number" id="tx-amount" inputmode="numeric" min="1" step="1" placeholder="0">
-                  </div>
-                  <small class="field-hint" id="tx-amount-preview">Rp0</small>
-                </div>
-
-                <div class="field">
-                  <label for="tx-date">Tanggal</label>
-                  <input type="date" id="tx-date">
-                </div>
-
-                <div class="field">
-                  <label for="tx-time">Jam</label>
-                  <input type="time" id="tx-time">
-                </div>
-
-                <div class="field field-full">
-                  <label for="tx-category">Kategori</label>
-                  <select id="tx-category"></select>
-                  <button type="button" class="link-btn" id="tx-add-category">
-                    <span class="material-symbols-rounded">add</span>
-                    Tambah kategori baru
-                  </button>
-                </div>
-
-                <div class="field field-full" id="tx-source-field" hidden>
-                  <label for="tx-source">Sumber pemasukan <span class="optional">(boleh dikosongkan)</span></label>
-                  <input type="text" id="tx-source" placeholder="Contoh: Ayah, Kampus, Klien">
-                </div>
-
-                <div class="field field-full">
-                  <label for="tx-note">Keterangan <span class="optional">(boleh dikosongkan)</span></label>
-                  <textarea id="tx-note" rows="2" placeholder="Contoh: Makan bersama teman setelah kuliah"></textarea>
-                </div>
-              </div>
-
-              <div class="button-row">
-                <button type="submit" class="btn btn-primary">
-                  <span class="material-symbols-rounded">check</span>
-                  Simpan Transaksi
-                </button>
-                <button type="button" class="btn btn-secondary" id="tx-reset">
-                  Kosongkan
-                </button>
-              </div>
-            </form>
-          </div>
-
-          <div class="card">
-            <div class="card-header">
-              <h2 class="card-title">Transaksi Terbaru</h2>
-              <button type="button" class="link-btn" id="tx-see-all">
-                Lihat semua
-                <span class="material-symbols-rounded">chevron_right</span>
-              </button>
-            </div>
-            <div class="tx-list" id="recent-transactions"></div>
-          </div>
-        </div>
-
-        <!-- ===== TAB RIWAYAT ===== -->
-        <div class="tab-panel" id="tab-riwayat">
+        <div class="tab-panel active" id="tab-riwayat">
           <!-- Pencarian & filter -->
           <div class="card">
             <div class="search-box">
@@ -281,6 +190,11 @@
               <div class="field">
                 <label for="hist-category">Kategori</label>
                 <select id="hist-category"></select>
+              </div>
+
+              <div class="field" id="hist-wallet-field" hidden>
+                <label for="hist-wallet">Dompet</label>
+                <select id="hist-wallet"><option value="">Semua dompet</option></select>
               </div>
 
               <div class="field">
@@ -334,12 +248,6 @@
           </div>
         </div>
 
-        <!-- ===== TAB KALENDER (diisi oleh kalender.js) ===== -->
-        <div class="tab-panel" id="tab-kalender">
-          <div class="card" id="cal-card"></div>
-          <div class="card" id="cal-day"></div>
-          <div class="card" id="cal-pattern"></div>
-        </div>
       </section>
 
       <!-- ===== HALAMAN UTANG & PATUNGAN (diisi oleh utang.js) ===== -->
@@ -464,13 +372,43 @@
 
       <!-- ===== HALAMAN LAPORAN (diisi oleh laporan.js) ===== -->
       <section class="page" id="page-laporan">
-        <div class="card" id="report-controls"></div>
-        <div id="report-summary"></div>
-        <div class="card" id="report-analysis"></div>
-        <div id="report-insights"></div>
-        <div class="card" id="report-trend"></div>
-        <div class="card" id="report-compare"></div>
-        <div class="card" id="report-transactions"></div>
+        <!-- Pusat analisis: Ringkasan / Kalender / Rekap -->
+        <div class="tabs" id="report-tabs">
+          <button type="button" class="tab active" data-rtab="ringkasan">
+            <span class="material-symbols-rounded">insights</span>
+            Ringkasan
+          </button>
+          <button type="button" class="tab" data-rtab="kalender">
+            <span class="material-symbols-rounded">calendar_month</span>
+            Kalender
+          </button>
+          <button type="button" class="tab" data-rtab="rekap">
+            <span class="material-symbols-rounded">auto_stories</span>
+            Rekap
+          </button>
+        </div>
+
+        <div class="tab-panel active" id="tab-ringkasan">
+          <div class="card" id="report-controls"></div>
+          <div id="report-summary"></div>
+          <div class="card" id="report-analysis"></div>
+          <div id="report-insights"></div>
+          <div class="card" id="report-trend"></div>
+          <div class="card" id="report-compare"></div>
+          <div class="card" id="report-transactions"></div>
+        </div>
+
+        <!-- ===== TAB KALENDER (kalender.js) ===== -->
+        <div class="tab-panel" id="tab-kalender">
+          <div class="card" id="cal-card"></div>
+          <div class="card" id="cal-day"></div>
+          <div class="card" id="cal-pattern"></div>
+        </div>
+
+        <!-- ===== TAB REKAP (rekap.js) ===== -->
+        <div class="tab-panel" id="tab-rekap">
+          <div class="card" id="recap-list"></div>
+        </div>
       </section>
 
       <!-- ===== HALAMAN PENGATURAN ===== -->
@@ -478,6 +416,9 @@
 
         <!-- Preferensi (diisi oleh pengaturan.js) -->
         <div class="card" id="settings-general"></div>
+
+        <!-- Keamanan / PIN (diisi oleh pin.js) -->
+        <div class="card" id="settings-security"></div>
 
         <!-- Kelola kategori -->
         <div class="card">
@@ -547,8 +488,8 @@
 
           <div class="button-row">
             <button class="btn btn-primary" id="btn-backup">
-              <span class="material-symbols-rounded">download</span>
-              Unduh Backup
+              <span class="material-symbols-rounded">cloud_upload</span>
+              Backup Sekarang
             </button>
             <button class="btn btn-secondary" id="btn-restore">
               <span class="material-symbols-rounded">upload</span>
@@ -564,6 +505,9 @@
             dan lakukan backup minimal seminggu sekali.
           </p>
         </div>
+
+        <!-- Cadangan otomatis (diisi oleh backup.js) -->
+        <div class="card" id="auto-backup"></div>
 
         <!-- Info penyimpanan, hapus data, tentang (diisi oleh pengaturan.js) -->
         <div class="card" id="settings-storage"></div>
@@ -585,6 +529,10 @@
           <span class="material-symbols-rounded">account_balance_wallet</span>
           <span>Uang Bulanan</span>
         </button>
+        <button class="more-item" data-page="anggaran">
+          <span class="material-symbols-rounded">calendar_view_week</span>
+          <span>Anggaran</span>
+        </button>
         <button class="more-item" data-page="tagihan">
           <span class="material-symbols-rounded">event</span>
           <span>Tagihan</span>
@@ -592,10 +540,6 @@
         <button class="more-item" data-page="utang">
           <span class="material-symbols-rounded">handshake</span>
           <span>Utang</span>
-        </button>
-        <button class="more-item" data-page="laporan">
-          <span class="material-symbols-rounded">bar_chart</span>
-          <span>Laporan</span>
         </button>
         <button class="more-item" data-page="pengaturan">
           <span class="material-symbols-rounded">settings</span>
@@ -661,6 +605,37 @@
     </div>
   </div>
 
+  <!-- ===== JENDELA DOMPET & REKENING ===== -->
+  <div class="modal" id="wallet-modal">
+    <div class="modal-backdrop" data-wallet-close></div>
+    <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="wallet-modal-title">
+      <div class="modal-header">
+        <h3 class="modal-title" id="wallet-modal-title">Dompet</h3>
+        <button type="button" class="icon-btn" data-wallet-close title="Tutup">
+          <span class="material-symbols-rounded">close</span>
+        </button>
+      </div>
+      <div id="wallet-modal-body"></div>
+    </div>
+  </div>
+
+  <!-- ===== TOMBOL ➕ MELAYANG & FORM CATAT CEPAT ===== -->
+  <button type="button" class="fab" id="fab" title="Catat transaksi" aria-label="Catat transaksi">
+    <span class="material-symbols-rounded">add</span>
+  </button>
+  <div class="modal" id="fab-modal">
+    <div class="modal-backdrop" data-fab-close></div>
+    <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="fab-title">
+      <div class="modal-header">
+        <h3 class="modal-title" id="fab-title">Catat</h3>
+        <button type="button" class="icon-btn" data-fab-close title="Tutup">
+          <span class="material-symbols-rounded">close</span>
+        </button>
+      </div>
+      <div id="fab-body"></div>
+    </div>
+  </div>
+
   <!-- ===== JENDELA DETAIL TRANSAKSI ===== -->
   <div class="modal" id="detail-modal">
     <div class="modal-backdrop" data-close></div>
@@ -694,6 +669,7 @@
   <script src="js/storage.js"></script>
   <script src="js/tema.js"></script>
   <script src="js/ui.js"></script>
+  <script src="js/dompet.js"></script>
   <script src="js/app.js"></script>
   <script src="js/backup.js"></script>
   <script src="js/transaksi.js"></script>
@@ -713,7 +689,13 @@
   <script src="js/utang.js"></script>
   <script src="js/kalender.js"></script>
   <script src="js/rekap.js"></script>
+  <script src="js/fab.js"></script>
+  <script src="js/kebiasaan.js"></script>
+  <script src="js/rencana.js"></script>
   <script src="js/pwa.js"></script>
   <script src="js/pengaturan.js"></script>
+  <script src="js/onboarding.js"></script>
+  <script src="js/versi.js"></script>
+  <script src="js/pin.js"></script>
 </body>
 </html>

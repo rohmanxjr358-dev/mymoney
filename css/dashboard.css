@@ -393,3 +393,115 @@
     font-size: 15px;
   }
 }
+
+
+/* ===== TOMBOL MATA: SEMBUNYIKAN SALDO ===== */
+.dash-hero-value-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.eye-btn {
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.eye-btn:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+.eye-btn .material-symbols-rounded {
+  font-size: 20px;
+}
+
+/* Mata "berkedip" saat ditekan */
+.eye-btn.flip .material-symbols-rounded {
+  animation: eyeBlink 0.35s ease;
+}
+
+@keyframes eyeBlink {
+  0%, 100% { transform: scaleY(1); }
+  50%      { transform: scaleY(0.1); }
+}
+
+/* Titik-titik pengganti angka, bergelombang pelan */
+.money-mask {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.money-mask i {
+  display: inline-block;
+  margin-left: 0.06em;
+  font-style: normal;
+  animation: maskWave 1.8s ease-in-out infinite;
+}
+
+.money-mask i:nth-child(2) { animation-delay: 0.1s; }
+.money-mask i:nth-child(3) { animation-delay: 0.2s; }
+.money-mask i:nth-child(4) { animation-delay: 0.3s; }
+.money-mask i:nth-child(5) { animation-delay: 0.4s; }
+.money-mask i:nth-child(6) { animation-delay: 0.5s; }
+
+@keyframes maskWave {
+  0%, 60%, 100% { transform: none; opacity: 1; }
+  30%           { transform: translateY(-0.18em); opacity: 0.6; }
+}
+
+/* Nominal lain di Dashboard diburamkan */
+#page-dashboard .stat strong,
+#page-dashboard .stat small,
+#page-dashboard .safe-big strong,
+#page-dashboard .safe-big small,
+#page-dashboard .safe-line strong,
+#page-dashboard .safe-sub,
+#page-dashboard .safe-projection,
+#page-dashboard .dash-warning,
+#page-dashboard .dash-fund strong,
+#page-dashboard .cat-bar-label strong,
+#page-dashboard .cat-total strong,
+#page-dashboard .insight-list strong,
+#page-dashboard .tx-amount,
+#page-dashboard .dash-debt strong,
+#page-dashboard .chart-box,
+#page-dashboard .chart-table {
+  transition: filter 0.35s ease;
+}
+
+#page-dashboard.money-hidden .stat strong,
+#page-dashboard.money-hidden .stat small,
+#page-dashboard.money-hidden .safe-big strong,
+#page-dashboard.money-hidden .safe-big small,
+#page-dashboard.money-hidden .safe-line strong,
+#page-dashboard.money-hidden .safe-sub,
+#page-dashboard.money-hidden .safe-projection,
+#page-dashboard.money-hidden .dash-warning,
+#page-dashboard.money-hidden .dash-fund strong,
+#page-dashboard.money-hidden .cat-bar-label strong,
+#page-dashboard.money-hidden .cat-total strong,
+#page-dashboard.money-hidden .insight-list strong,
+#page-dashboard.money-hidden .tx-amount,
+#page-dashboard.money-hidden .dash-debt strong,
+#page-dashboard.money-hidden .chart-box,
+#page-dashboard.money-hidden .chart-table {
+  filter: blur(7px);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .money-mask i,
+  .eye-btn.flip .material-symbols-rounded {
+    animation: none;
+  }
+}

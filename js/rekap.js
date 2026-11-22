@@ -155,6 +155,7 @@ function buildRecapSlides(r) {
           ${m.maxDay ? `<p>📍 Hari paling boros: <strong>${formatShortDate(m.maxDay.date)}</strong> (${formatRupiah(m.maxDay.out)})</p>` : ''}
           <p>📆 Rata-rata paling boros di hari <strong>${WEEKDAY_LONG[topDay.index]}</strong></p>
           <p>💚 <strong>${m.zeroDays} hari</strong> tanpa pengeluaran sama sekali</p>
+          ${m.unrecordedDays ? `<p>🫥 <strong>${m.unrecordedDays} hari</strong> belum dicatat — angka di atas bisa kurang dari kenyataan</p>` : ''}
         </div>
       `
     });
@@ -326,43 +327,72 @@ function closeRecap() {
   if (shell) shell.classList.remove('open');
   document.body.classList.remove('recap-open');
   renderDashRecap();
+  renderRecapList();
 }
 
 
-// ===== KARTU REKAP DI DASHBOARD =====
-function renderDashRecap() {
-  const box = document.getElementById('dash-recap');
-  if (!box) return;
-
+// ===== BANNER REKAP (tampil di slot pemberitahuan Dashboard, lihat kebiasaan.js) =====
+// Hanya muncul untuk rekap bulan lalu yang BELUM dibuka. Rekap lain ada di Laporan → Rekap.
+function recapBannerHtml() {
   const now = new Date();
   const prev = new Date(now.getFullYear(), now.getMonth() - 1, 1);
   const prevKey = monthKey(prev.getFullYear(), prev.getMonth());
-  const prevName = prev.toLocaleDateString('id-ID', { month: 'long' });
-  const nowName = now.toLocaleDateString('id-ID', { month: 'long' });
-  const hasPrev = monthHasTransactions(prev.getFullYear(), prev.getMonth());
-  const hasNow = monthHasTransactions(now.getFullYear(), now.getMonth());
+  if (appData.settings.recapSeen[prevKey] || !monthHasTransactions(prev.getFullYear(), prev.getMonth())) return '';
 
-  if (hasPrev && !appData.settings.recapSeen[prevKey]) {
-    box.innerHTML = `
-      <button type="button" class="recap-banner" data-recap-open="${prev.getFullYear()}-${prev.getMonth()}">
-        <span class="recap-banner-gift">🎁</span>
-        <span class="recap-banner-text">
-          <strong>Rekap ${prevName} sudah siap!</strong>
-          <small>Ketuk untuk melihat perjalanan uangmu</small>
-        </span>
-        <span class="material-symbols-rounded">arrow_forward</span>
-      </button>
-    `;
-    return;
-  }
-
-  const pills = [];
-  if (hasPrev) pills.push(`<button type="button" class="recap-pill" data-recap-open="${prev.getFullYear()}-${prev.getMonth()}">🎁 Rekap ${prevName}</button>`);
-  if (hasNow) pills.push(`<button type="button" class="recap-pill" data-recap-open="${now.getFullYear()}-${now.getMonth()}">👀 Intip rekap ${nowName}</button>`);
-  box.innerHTML = pills.length ? `<div class="recap-pills">${pills.join('')}</div>` : '';
+  return `
+    <button type="button" class="recap-banner" data-recap-open="${prev.getFullYear()}-${prev.getMonth()}">
+      <span class="recap-banner-gift">🎁</span>
+      <span class="recap-banner-text">
+        <strong>Rekap ${prev.toLocaleDateString('id-ID', { month: 'long' })} sudah siap!</strong>
+        <small>Ketuk untuk melihat perjalanan uangmu</small>
+      </span>
+      <span class="material-symbols-rounded">arrow_forward</span>
+    </button>
+  `;
 }
 
-document.getElementById('dash-recap').addEventListener('click', function (event) {
+function renderDashRecap() {
+  if (typeof renderDashNudge === 'function') renderDashNudge();
+}
+
+// ===== DAFTAR REKAP (Laporan → Rekap) =====
+function renderRecapList() {
+  const box = document.getElementById('recap-list');
+  if (!box) return;
+
+  const now = new Date();
+  const months = [];
+  for (let i = 0; i < 12; i++) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    if (!monthHasTransactions(d.getFullYear(), d.getMonth())) continue;
+    const start = dateToString(d);
+    const end = dateToString(new Date(d.getFullYear(), d.getMonth() + 1, 0));
+    months.push({ year: d.getFullYear(), month: d.getMonth(), totals: getTotalsBetween(start, end), current: i === 0,
+      unseen: i > 0 && !appData.settings.recapSeen[monthKey(d.getFullYear(), d.getMonth())] });
+  }
+
+  box.innerHTML = `
+    <div class="card-header">
+      <h2 class="card-title">Rekap Bulanan</h2>
+      <span class="card-sub">Cerita singkat tiap bulan</span>
+    </div>
+    ${months.length ? `<div class="recap-months">${months.map(function (m, i) {
+      return `
+        <button type="button" class="recap-month ${m.unseen ? 'unseen' : ''}" data-recap-open="${m.year}-${m.month}" style="--i:${i}">
+          <span class="recap-month-emoji">${m.current ? '👀' : '🎁'}</span>
+          <span class="recap-month-info">
+            <strong>${monthTitle(m.year, m.month)}</strong>
+            <small>${m.current ? 'Sementara · bulan berjalan' : 'Keluar ' + formatRupiah(m.totals.keluar)}</small>
+          </span>
+          ${m.unseen ? '<span class="recap-new">Baru</span>' : '<span class="material-symbols-rounded">play_circle</span>'}
+        </button>
+      `;
+    }).join('')}</div>` : '<p class="empty-state">Belum ada transaksi untuk dibuat rekap.</p>'}
+  `;
+}
+
+// Tombol pembuka rekap di mana pun (Dashboard atau Laporan)
+document.addEventListener('click', function (event) {
   const button = event.target.closest('[data-recap-open]');
   if (!button) return;
   const parts = button.dataset.recapOpen.split('-');
@@ -380,9 +410,11 @@ document.addEventListener('keydown', function (event) {
 
 // ===== BAGIAN TAMBAHAN DASHBOARD (dipanggil oleh renderDashboard) =====
 function renderDashExtras() {
+  if (typeof renderHeroStatus === 'function') renderHeroStatus();
+  renderDashWallets();
   renderQuick('dash-quick');
   renderDashDebt();
-  renderDashRecap();
+  if (typeof renderDashHabit === 'function') renderDashHabit();
 }
 
 renderDashExtras();

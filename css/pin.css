@@ -1,0 +1,326 @@
+/* =====================================================
+   PIN.CSS — Layar kunci PIN
+   ===================================================== */
+
+/* Isi aplikasi disembunyikan selama terkunci / saat membuat PIN */
+html.pin-locked body > *:not(.pin-screen):not(#toast),
+html.pin-open body > *:not(.pin-screen):not(#toast) {
+  visibility: hidden !important;
+}
+
+html.pin-locked,
+html.pin-locked body,
+html.pin-open body {
+  overflow: hidden;
+}
+
+/* Saat aplikasi ditinggal: isi disamarkan (tidak terbaca di daftar aplikasi) */
+html.pin-privacy body > *:not(.pin-screen) {
+  filter: blur(24px);
+}
+
+html.pin-open #toast {
+  z-index: 120;
+}
+
+.pin-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: calc(20px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom));
+  overflow-y: auto;
+  background:
+    radial-gradient(120% 60% at 50% 0%, rgba(59, 130, 246, 0.35), transparent 60%),
+    radial-gradient(80% 50% at 100% 100%, rgba(124, 58, 237, 0.25), transparent 60%),
+    #0b1120;
+  color: #e2e8f0;
+  animation: recapFade 0.25s ease;
+}
+
+.pin-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: min(320px, 100%);
+  text-align: center;
+}
+
+.pin-box.wide {
+  width: min(380px, 100%);
+}
+
+.pin-logo {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  margin-bottom: 6px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #60a5fa, #1d4ed8 55%, #7c3aed);
+  font-size: 30px;
+  font-weight: 800;
+  color: #fff;
+  box-shadow: 0 16px 34px -14px rgba(59, 130, 246, 0.9);
+}
+
+.pin-box h2 {
+  font-size: 21px;
+  font-weight: 800;
+}
+
+.pin-sub {
+  max-width: 300px;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: #94a3b8;
+}
+
+/* Titik PIN */
+.pin-dots {
+  display: flex;
+  gap: 18px;
+  margin: 16px 0 4px;
+}
+
+.pin-dots i {
+  width: 15px;
+  height: 15px;
+  border: 2px solid #64748b;
+  border-radius: 50%;
+  transition: background 0.15s, border-color 0.15s, transform 0.15s;
+}
+
+.pin-dots i.on {
+  border-color: #60a5fa;
+  background: #60a5fa;
+  transform: scale(1.1);
+}
+
+.pin-dots.error {
+  animation: pinShake 0.4s ease;
+}
+
+.pin-dots.error i {
+  border-color: #f87171;
+  background: transparent;
+}
+
+.pin-dots.ok i {
+  border-color: #34d399;
+  background: #34d399;
+}
+
+@keyframes pinShake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-12px); }
+  40% { transform: translateX(10px); }
+  60% { transform: translateX(-7px); }
+  80% { transform: translateX(4px); }
+}
+
+.pin-message {
+  min-height: 20px;
+  font-size: 13px;
+  color: #fca5a5;
+}
+
+/* Tombol angka */
+.pin-keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 72px);
+  gap: 14px 22px;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.pin-key {
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.07);
+  font: inherit;
+  font-size: 26px;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.12s, transform 0.12s;
+}
+
+.pin-key:active {
+  background: rgba(96, 165, 250, 0.35);
+  transform: scale(0.92);
+}
+
+.pin-key.text {
+  background: none;
+  font-size: 13px;
+  font-weight: 600;
+  color: #93c5fd;
+}
+
+.pin-key .material-symbols-rounded {
+  font-size: 24px;
+}
+
+.pin-screen.waiting .pin-key {
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.pin-screen.waiting .pin-key.text {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Kode pemulihan */
+.pin-code {
+  margin: 10px 0 2px;
+  padding: 16px 20px;
+  border: 2px dashed rgba(147, 197, 253, 0.6);
+  border-radius: 16px;
+  background: rgba(59, 130, 246, 0.12);
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #fff;
+  user-select: all;
+  -webkit-user-select: all;
+}
+
+.pin-code-input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.06);
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-transform: uppercase;
+  color: #fff;
+  outline: none;
+}
+
+.pin-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.pin-check input {
+  width: 20px;
+  height: 20px;
+  accent-color: #3b82f6;
+}
+
+.pin-primary {
+  width: 100%;
+  margin-top: 10px;
+  padding: 15px;
+  border: none;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #3b82f6, #4f46e5);
+  font: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+}
+
+.pin-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px;
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #93c5fd;
+  cursor: pointer;
+}
+
+.pin-link .material-symbols-rounded {
+  font-size: 18px;
+}
+
+/* Pengaturan → Keamanan */
+.security-sub {
+  margin: 14px 0 8px;
+}
+
+.security-timeout {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+/* Pilihan PIN di layar akhir pengaturan awal */
+.onboard-pin {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 340px;
+  padding: 14px;
+  border: 1px solid rgba(147, 197, 253, 0.35);
+  border-radius: 16px;
+  background: rgba(59, 130, 246, 0.1);
+  text-align: left;
+  cursor: pointer;
+}
+
+.onboard-pin input {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  accent-color: #3b82f6;
+}
+
+.onboard-pin span {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.onboard-pin strong {
+  font-size: 14px;
+  color: #fff;
+}
+
+.onboard-pin small {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+@media (max-height: 640px) {
+  .pin-keypad {
+    grid-template-columns: repeat(3, 62px);
+    gap: 10px 18px;
+  }
+
+  .pin-key {
+    width: 62px;
+    height: 62px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pin-screen,
+  .pin-dots.error {
+    animation: none;
+  }
+}

@@ -16,6 +16,26 @@ let calSlide = '';                       // animasi saat buka / ganti bulan
 let calBillDays = {};                    // tagihan per tanggal (bulan yang tampil)
 
 
+// ===== HARI TANPA PENGELUARAN YANG DIKONFIRMASI =====
+// zeroDays     = ditandai di hari itu juga (ikut menghitung streak)
+// zeroDaysLate = ditandai belakangan dari Kalender (tidak menghidupkan streak)
+function isConfirmedZeroDay(date) {
+  const s = appData.settings;
+  return (s.zeroDays || []).includes(date) || (s.zeroDaysLate || []).includes(date);
+}
+
+function markConfirmedZeroDay(date) {
+  const s = appData.settings;
+  if (date === todayString()) {
+    s.zeroDays = s.zeroDays || [];
+    if (!s.zeroDays.includes(date)) s.zeroDays.push(date);
+  } else {
+    s.zeroDaysLate = s.zeroDaysLate || [];
+    if (!s.zeroDaysLate.includes(date)) s.zeroDaysLate.push(date);
+  }
+  saveData();
+}
+
 // ===== DATA SATU BULAN (dipakai juga oleh Rekap) =====
 // Mengembalikan angka per hari + ringkasan bulan itu.
 function getMonthDays(year, month) {
@@ -29,7 +49,8 @@ function getMonthDays(year, month) {
       date: date, day: d,
       weekday: (new Date(year, month, d).getDay() + 6) % 7,   // 0 = Senin
       out: 0, in: 0, sisih: 0, count: 0,
-      future: date > today
+      future: date > today,
+      confirmedZero: isConfirmedZeroDay(date)
     });
   }
 
@@ -50,24 +71,32 @@ function getMonthDays(year, month) {
   const elapsed = days.filter(function (d) { return !d.future; });
   const totalOut = days.reduce(function (s, d) { return s + d.out; }, 0);
   const spendDays = days.filter(function (d) { return d.out > 0; });
-  const average = elapsed.length ? Math.round(totalOut / elapsed.length) : 0;
+  const recordedCount = elapsed.filter(function (d) { return d.count > 0 || d.confirmedZero; }).length;
+  const average = recordedCount ? Math.round(totalOut / recordedCount) : 0;
   const averageSpendDay = spendDays.length ? totalOut / spendDays.length : 0;
   const maxDay = spendDays.slice().sort(function (a, b) { return b.out - a.out; })[0] || null;
-  const zeroDays = elapsed.filter(function (d) { return d.out === 0; }).length;
-  const recordedDays = elapsed.filter(function (d) { return d.count > 0; }).length;
+  // Hari dianggap "tercatat" jika ada transaksi ATAU ditandai "nggak keluar uang".
+  // Hari kosong tanpa tanda = lupa dicatat (BUKAN hari hemat).
+  elapsed.forEach(function (d) { d.recorded = d.count > 0 || d.confirmedZero; });
+  const zeroDays = elapsed.filter(function (d) { return d.recorded && d.out === 0; }).length;
+  const recordedDays = elapsed.filter(function (d) { return d.recorded; }).length;
+  const unrecordedDays = elapsed.length - recordedDays;
 
-  // Hari hemat beruntun: mundur dari hari terakhir yang sudah lewat
+  // Hari hemat beruntun: mundur dari hari terakhir; hari yang belum dicatat memutus hitungan
+  // (hari ini yang belum dicatat dilewati, karena harinya belum selesai)
   let streak = 0;
   if (average > 0) {
     for (let i = elapsed.length - 1; i >= 0; i--) {
-      if (elapsed[i].out <= average) streak++;
+      const d = elapsed[i];
+      if (!d.recorded && d.date === today) continue;
+      if (d.recorded && d.out <= average) streak++;
       else break;
     }
   }
 
   // Rata-rata per hari dalam seminggu (Senin–Minggu)
   const weekday = [0, 1, 2, 3, 4, 5, 6].map(function (w) {
-    const list = elapsed.filter(function (d) { return d.weekday === w; });
+    const list = elapsed.filter(function (d) { return d.weekday === w && d.recorded; });
     const sum = list.reduce(function (s, d) { return s + d.out; }, 0);
     return { index: w, average: list.length ? Math.round(sum / list.length) : 0, count: list.length };
   });
@@ -75,7 +104,7 @@ function getMonthDays(year, month) {
   return {
     days: days, elapsed: elapsed.length, totalOut: totalOut, average: average,
     averageSpendDay: averageSpendDay, maxDay: maxDay, zeroDays: zeroDays,
-    recordedDays: recordedDays, streak: streak, weekday: weekday
+    recordedDays: recordedDays, unrecordedDays: unrecordedDays, streak: streak, weekday: weekday
   };
 }
 
@@ -118,18 +147,22 @@ function renderCalendar() {
     const level = heatLevel(d.out, data.averageSpendDay);
     const bills = billDays[d.date];
     const billUnpaid = bills && bills.some(function (b) { return b.status.code !== 'lunas'; });
+    const unrecorded = !d.future && !d.count && !d.confirmedZero && d.date !== today;
     const classes = [
       'cal-cell', 'heat-' + level,
+      unrecorded ? 'unrecorded' : '',
+      d.confirmedZero && !d.out ? 'zero' : '',
       d.date === today ? 'today' : '',
       d.date === calSelected ? 'selected' : '',
       d.future ? 'future' : ''
     ].join(' ');
-    const title = formatLongDate(d.date) + (d.out ? ': keluar ' + formatRupiah(d.out) : ': tanpa pengeluaran');
+    const title = formatLongDate(d.date) + (d.out ? ': keluar ' + formatRupiah(d.out)
+      : d.confirmedZero ? ': tanpa pengeluaran' : unrecorded ? ': belum dicatat' : '');
 
     return `
       <button type="button" class="${classes}" data-cal-date="${d.date}" title="${title}" style="--d:${i}">
         <span class="cal-num">${d.day}</span>
-        <span class="cal-amt">${d.out ? compactRupiah(d.out) : (d.future ? '' : '·')}</span>
+        <span class="cal-amt">${d.out ? compactRupiah(d.out) : (d.future ? '' : (d.confirmedZero ? '✓' : (unrecorded ? '?' : '·')))}</span>
         <span class="cal-dots">
           ${d.in ? '<i class="dot in"></i>' : ''}
           ${bills ? `<i class="dot bill ${billUnpaid ? '' : 'paid'}"></i>` : ''}
@@ -144,6 +177,7 @@ function renderCalendar() {
       <div class="cal-stat"><span>Total keluar</span><strong>${formatRupiah(data.totalOut)}</strong></div>
       <div class="cal-stat"><span>Rata-rata/hari</span><strong>${formatRupiah(data.average)}</strong></div>
       <div class="cal-stat zero"><span>Tanpa pengeluaran</span><strong>${data.zeroDays} hari</strong></div>
+      ${data.unrecordedDays ? `<div class="cal-stat missing"><span>Belum dicatat</span><strong>${data.unrecordedDays} hari</strong></div>` : ''}
       ${isCurrentMonth
         ? `<div class="cal-stat streak ${data.streak >= 3 ? 'hot' : ''}"><span>Hemat beruntun</span><strong>${data.streak >= 3 ? '🔥 ' : ''}${data.streak} hari</strong></div>`
         : `<div class="cal-stat"><span>Hari tercatat</span><strong>${data.recordedDays}/${data.elapsed}</strong></div>`}
@@ -169,6 +203,8 @@ function renderCalendar() {
       <span class="cal-scale">Hemat
         <i class="heat-0"></i><i class="heat-1"></i><i class="heat-2"></i><i class="heat-3"></i><i class="heat-4"></i>
         Boros</span>
+      <span><i class="cal-key zero">✓</i> Nol rupiah</span>
+      <span><i class="cal-key missing">?</i> Belum dicatat</span>
       <span><i class="dot in"></i> Uang masuk</span>
       <span><i class="dot bill"></i> Tagihan</span>
     </div>
@@ -211,9 +247,14 @@ function renderCalendarDay() {
   }).join('');
 
   const isFuture = calSelected > todayString();
+  const confirmed = isConfirmedZeroDay(calSelected);
   const emptyText = isFuture
     ? 'Hari ini belum tiba.'
-    : 'Tidak ada pengeluaran di hari ini. Mantap! 💚';
+    : confirmed
+      ? 'Tidak ada pengeluaran di hari ini. Mantap! 💚'
+      : `Belum ada catatan di hari ini.
+         <button type="button" class="link-btn cal-mark-zero" data-cal-zero="${calSelected}">
+           <span class="material-symbols-rounded">check_circle</span> Tandai: memang nggak keluar uang</button>`;
 
   calDayCard.innerHTML = `
     <div class="card-header">
@@ -323,6 +364,14 @@ document.getElementById('tab-kalender').addEventListener('click', function (even
     return;
   }
 
+  const zeroBtn = event.target.closest('[data-cal-zero]');
+  if (zeroBtn) {
+    markConfirmedZeroDay(zeroBtn.dataset.calZero);
+    renderCalendar();
+    showToast('💚 Ditandai: tidak ada pengeluaran');
+    return;
+  }
+
   const cell = event.target.closest('[data-cal-date]');
   if (cell) {
     calSelected = cell.dataset.calDate;
@@ -336,10 +385,7 @@ document.getElementById('tab-kalender').addEventListener('click', function (even
   // Edit / hapus / detail pada transaksi hari itu
   const action = event.target.closest('[data-action]');
   if (action) {
-    if (action.dataset.action === 'edit') {
-      switchTransactionTab('catat');
-      startEdit(action.dataset.id);
-    }
+    if (action.dataset.action === 'edit') startEdit(action.dataset.id);
     if (action.dataset.action === 'delete') {
       deleteTransaction(action.dataset.id);
       renderCalendar();
@@ -366,9 +412,23 @@ calCard.addEventListener('touchend', function (event) {
   if (button) button.click();
 }, { passive: true });
 
-document.querySelector('#tx-tabs [data-tab="kalender"]').addEventListener('click', function () {
-  calSlide = 'enter';
-  renderCalendar();
+// ===== TAB DI HALAMAN LAPORAN: Ringkasan / Kalender / Rekap =====
+function switchReportTab(name) {
+  document.querySelectorAll('#report-tabs .tab').forEach(function (btn) {
+    btn.classList.toggle('active', btn.dataset.rtab === name);
+  });
+  document.querySelectorAll('#page-laporan > .tab-panel').forEach(function (panel) {
+    panel.classList.toggle('active', panel.id === 'tab-' + name);
+  });
+  if (name === 'ringkasan') renderLaporan();
+  if (name === 'kalender') { calSlide = 'enter'; renderCalendar(); }
+  if (name === 'rekap' && typeof renderRecapList === 'function') renderRecapList();
+  window.scrollTo(0, 0);
+}
+
+document.getElementById('report-tabs').addEventListener('click', function (event) {
+  const tab = event.target.closest('[data-rtab]');
+  if (tab) switchReportTab(tab.dataset.rtab);
 });
 
 // Setelah transaksi dihapus dari jendela detail, perbarui kalender

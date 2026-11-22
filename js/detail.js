@@ -35,6 +35,7 @@ function openDetail(id) {
     ['Jenis', kindLabels[kind]],
     ['Kategori', categoryName],
     ['Grup', category ? category.group : '-'],
+    ['Dompet', walletName(txWalletId(tx))],
     ['Tanggal', formatLongDate(tx.date)],
     ['Jam', tx.time]
   ];
@@ -121,7 +122,6 @@ function handleTransactionListClick(event) {
 
 
 // ===== MENGHUBUNGKAN TOMBOL =====
-recentContainer.addEventListener('click', handleTransactionListClick);
 histList.addEventListener('click', handleTransactionListClick);
 
 detailEditButton.addEventListener('click', editFromDetail);

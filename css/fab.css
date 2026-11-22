@@ -1,0 +1,236 @@
+/* =====================================================
+   FAB.CSS — Tombol ➕ melayang & form catat cepat
+   ===================================================== */
+
+.fab {
+  position: fixed;
+  right: 28px;
+  bottom: 28px;
+  z-index: 30;
+  display: grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  border: none;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8 55%, #4f46e5);
+  background-size: 200% 200%;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 14px 28px -10px rgba(29, 78, 216, 0.7), 0 0 0 4px rgba(59, 130, 246, 0.12);
+  animation: gradientShift 6s ease infinite;
+  transition: transform 0.25s cubic-bezier(0.3, 1.4, 0.5, 1), opacity 0.2s, bottom 0.25s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.fab .material-symbols-rounded {
+  font-size: 32px;
+  transition: transform 0.3s cubic-bezier(0.3, 1.4, 0.5, 1);
+}
+
+.fab:active {
+  transform: scale(0.92);
+}
+
+.fab.open .material-symbols-rounded {
+  transform: rotate(135deg);
+}
+
+/* Disembunyikan saat jendela lain / rekap / pengaturan awal terbuka */
+body:has(.modal.open:not(#fab-modal)) .fab,
+body:has(.more-sheet.open) .fab,
+body.recap-open .fab,
+body.onboarding-open .fab {
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.4);
+}
+
+/* Bergeser ke atas saat ada notifikasi di bawah */
+body:has(.snack.show) .fab,
+body:has(.toast.show) .fab {
+  bottom: 96px;
+}
+
+/* ===== FORM ===== */
+#fab-modal {
+  z-index: 35;
+}
+
+.fab-type {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 0;
+}
+
+.fab-type .segmented-btn.active[data-fab-type="keluar"] { color: var(--danger); }
+.fab-type .segmented-btn.active[data-fab-type="masuk"]  { color: var(--success); }
+
+.fab-amount {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 18px;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.fab-amount input {
+  width: 100%;
+  max-width: 240px;
+  border: none;
+  outline: none;
+  background: none;
+  font: inherit;
+  font-size: 38px;
+  font-weight: 800;
+  text-align: left;
+  color: var(--text);
+  -moz-appearance: textfield;
+}
+
+.fab-amount input::-webkit-outer-spin-button,
+.fab-amount input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
+.fab-amount.keluar input { color: var(--danger); }
+.fab-amount.masuk input  { color: var(--success); }
+
+.fab-preview {
+  margin-bottom: 8px;
+  font-size: 12px;
+  text-align: center;
+  color: var(--muted);
+}
+
+.fab-label {
+  margin: 14px 0 8px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.fab-cats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.fab-cat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 8px 2px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  font: inherit;
+  color: var(--text);
+  cursor: pointer;
+  transition: transform 0.15s, border-color 0.15s, background 0.15s;
+}
+
+.fab-cat span {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.fab-cat small {
+  max-width: 100%;
+  overflow: hidden;
+  font-size: 10.5px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.fab-cat.active {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+  transform: scale(1.04);
+}
+
+.fab-more,
+.fab-extra input {
+  width: 100%;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  font: inherit;
+  font-size: 16px;
+  color: var(--text);
+}
+
+.fab-more {
+  margin-top: 8px;
+}
+
+.fab-extra {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.btn-block {
+  width: 100%;
+}
+
+.fab-save {
+  margin-top: 16px;
+  padding: 14px;
+  font-size: 15px;
+}
+
+/* ===== HP ===== */
+@media (max-width: 768px) {
+  /* Di HP sudah ada tombol ➕, jadi tombol "Catat Transaksi" di kartu saldo disembunyikan */
+  .dash-hero .btn-light {
+    display: none;
+  }
+
+  .fab {
+    right: 16px;
+    bottom: calc(82px + env(safe-area-inset-bottom));
+    width: 54px;
+    height: 54px;
+    border-radius: 18px;
+  }
+
+  body:has(.snack.show) .fab,
+  body:has(.toast.show) .fab {
+    bottom: calc(150px + env(safe-area-inset-bottom));
+  }
+}
+
+@media print {
+  .fab {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fab {
+    animation: none;
+  }
+}
+
+
+/* ===== FORM ➕ SEBAGAI FORM UBAH ===== */
+.fab-type.two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.fab-extra .fab-source {
+  grid-column: 1 / -1;
+}
+
+.fab-delete {
+  margin-top: 8px;
+}

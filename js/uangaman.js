@@ -3,21 +3,21 @@
 // =====================================================
 //
 // Rumus:
-//   Uang pakai saat ini
-//   − kebutuhan wajib yang belum dibayar
+//   Uang di dompet saat ini
+//   − wajib bayar yang belum dibayar
 //   − tagihan yang jatuh tempo sebelum transfer berikutnya (belum dibayar)
 //   − uang yang direncanakan disisihkan tetapi belum dipindah ke tabungan
 //   = uang yang BENAR-BENAR bisa dipakai
 //
-//   Batas harian = uang yang bisa dipakai ÷ jumlah hari sampai transfer berikutnya
+//   Jatah harian = uang yang bisa dipakai ÷ jumlah hari sampai transfer berikutnya
 //
 // Semua angka berasal dari data yang tercatat — tidak ada angka tebakan.
 
 
 // ===== PENGELUARAN "HARIAN" =====
-// Dipakai untuk batas harian: sama seperti anggaran mingguan —
+// Dipakai untuk jatah harian: sama seperti anggaran mingguan —
 // tidak termasuk uang yang disisihkan, pembayaran tagihan,
-// dan kategori kebutuhan wajib.
+// dan kategori wajib bayar.
 function isDailySpending(tx, wajibCategoryIds) {
   if (tx.type !== 'keluar' || tx.billId) return false;
   const category = findCategory(tx.categoryId);
@@ -55,7 +55,7 @@ function getUnpaidWajib(period) {
 
 
 // ===== TAGIHAN YANG JATUH TEMPO SEBELUM TRANSFER BERIKUTNYA =====
-// Tagihan yang kategorinya sudah masuk kebutuhan wajib tidak dihitung lagi
+// Tagihan yang kategorinya sudah masuk wajib bayar tidak dihitung lagi
 // (supaya tidak terhitung dua kali).
 function getUnpaidBillsUntil(endDate, period) {
   const wajibIds = period ? getWajibCategoryIds(period) : [];
@@ -121,10 +121,24 @@ function getSafeMoney() {
 
   const usable = wallet - wajib.total - bills.total - savings.total;
 
-  // Batas harian dihitung dari posisi AWAL hari ini
+  // Jatah harian dihitung dari posisi AWAL hari ini
   // (pengeluaran hari ini dikembalikan dulu, supaya batasnya tidak bergeser sepanjang hari)
   const spentToday = getDailySpending(period, today, today);
-  const dailyLimit = daysLeft > 0 ? Math.max(0, Math.floor((usable + spentToday) / daysLeft)) : 0;
+  let dailyLimit = daysLeft > 0 ? Math.max(0, Math.floor((usable + spentToday) / daysLeft)) : 0;
+  let limitSource = 'aman';
+
+  // Jika anggaran pekan ini sudah diatur, jatah harian mengikuti sisa anggaran pekan
+  // (diambil yang lebih kecil, supaya hanya ada SATU angka batas yang aman diikuti)
+  const weekNow = getCurrentWeekStatus();
+  if (daysLeft > 0 && weekNow && weekNow.week.available > 0) {
+    const w = weekNow.week;
+    const weekDaysLeft = Math.max(1, daysBetween(today, w.end) + 1);
+    const weekDaily = Math.max(0, Math.floor((w.remaining + spentToday) / weekDaysLeft));
+    if (weekDaily <= dailyLimit) {
+      dailyLimit = weekDaily;
+      limitSource = 'pekan';
+    }
+  }
 
   // Perkiraan: jika kebiasaan belanja sejauh ini berlanjut, apakah cukup?
   const daysElapsed = Math.max(1, daysBetween(period.receivedDate, today) + 1);
@@ -147,7 +161,7 @@ function getSafeMoney() {
   if (usable < 0) {
     warnings.push({
       level: 'over',
-      text: 'Uang pakai tidak cukup untuk kebutuhan wajib, tagihan, dan rencana tabungan. ' +
+      text: 'Uang di dompet tidak cukup untuk wajib bayar, tagihan, dan rencana tabungan. ' +
             'Kurang ' + formatRupiah(Math.abs(usable)) + '.'
     });
   }
@@ -155,13 +169,13 @@ function getSafeMoney() {
     warnings.push({
       level: 'over',
       text: 'Pengeluaran hari ini ' + formatRupiah(spentToday) +
-            ' sudah melebihi batas harian ' + formatRupiah(dailyLimit) + '.'
+            ' sudah melebihi jatah harian ' + formatRupiah(dailyLimit) + '.'
     });
   } else if (daysLeft > 0 && dailyLimit > 0 && spentToday >= dailyLimit * 0.8) {
     warnings.push({
       level: 'late',
       text: 'Pengeluaran hari ini sudah ' + Math.round((spentToday / dailyLimit) * 100) +
-            '% dari batas harian.'
+            '% dari jatah harian.'
     });
   }
 
@@ -192,6 +206,7 @@ function getSafeMoney() {
     nextDate: nextDate,
     daysLeft: daysLeft,
     dailyLimit: dailyLimit,
+    limitSource: limitSource,
     spentToday: spentToday,
     averageDaily: averageDaily,
     projectedNeed: projectedNeed,

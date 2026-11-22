@@ -17,7 +17,6 @@ const catSubmitButton = document.getElementById('cat-submit');
 const catCancelButton = document.getElementById('cat-cancel');
 const catTypeButtons = document.querySelectorAll('#category-type .segmented-btn');
 const catList = document.getElementById('category-list');
-const txAddCategoryButton = document.getElementById('tx-add-category');
 
 // Jenis kategori yang sedang ditampilkan: 'keluar' atau 'masuk'
 let categoryType = 'keluar';
@@ -49,11 +48,6 @@ function findCategoryByName(name, type, exceptId) {
 function refreshCategoryViews() {
   renderCategoryList();
   fillGroupOptions();
-
-  // Pilihan kategori di form transaksi (pilihan yang sedang dipilih dipertahankan)
-  const selected = txCategory.value;
-  fillCategoryOptions();
-  txCategory.value = selected;
 
   renderRecentTransactions();
   updateBackupInfo();
@@ -247,40 +241,6 @@ function renderCategoryList() {
 }
 
 
-// ===== TAMBAH KATEGORI CEPAT DARI FORM TRANSAKSI =====
-function quickAddCategory() {
-  const label = currentType === 'masuk' ? 'uang masuk' : 'uang keluar';
-  const input = prompt('Nama kategori baru untuk ' + label + ':');
-  if (input === null) return;          // klik Cancel
-
-  const name = input.trim();
-  if (!name) return;
-
-  // Jika sudah ada, langsung pilih yang lama
-  const existing = findCategoryByName(name, currentType, null);
-  if (existing) {
-    txCategory.value = existing.id;
-    showToast('Kategori sudah ada, langsung dipilih');
-    return;
-  }
-
-  const newCategory = {
-    id: generateId(),
-    name: name,
-    type: currentType,
-    group: defaultGroupFor(currentType),
-    fund: null,
-    isDefault: false
-  };
-  appData.categories.push(newCategory);
-  saveData();
-
-  refreshCategoryViews();
-  txCategory.value = newCategory.id;   // langsung terpilih
-  showToast('Kategori "' + name + '" ditambahkan');
-}
-
-
 // ===== MENGHUBUNGKAN TOMBOL =====
 catTypeButtons.forEach(function (btn) {
   btn.addEventListener('click', function () {
@@ -290,7 +250,6 @@ catTypeButtons.forEach(function (btn) {
 
 catForm.addEventListener('submit', saveCategory);
 catCancelButton.addEventListener('click', resetCategoryForm);
-txAddCategoryButton.addEventListener('click', quickAddCategory);
 
 catList.addEventListener('click', function (event) {
   const button = event.target.closest('[data-action]');

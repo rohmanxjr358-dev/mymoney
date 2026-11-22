@@ -1,0 +1,246 @@
+/* =====================================================
+   KEBIASAAN.CSS — Pengingat, streak 🔥, Dashboard bertahap
+   ===================================================== */
+
+/* Bagian yang disembunyikan benar-benar hilang (walau punya display: grid) */
+#page-dashboard [hidden] {
+  display: none !important;
+}
+
+#dash-nudge:empty,
+#dash-unlock:empty {
+  display: none;
+}
+
+/* ===== KARTU PENGINGAT ===== */
+.nudge {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px 14px;
+  padding: 16px;
+  border-radius: var(--radius);
+  background:
+    linear-gradient(var(--surface), var(--surface)) padding-box,
+    linear-gradient(120deg, #f59e0b, #ec4899, #8b5cf6, #3b82f6, #f59e0b) border-box;
+  background-size: 100% 100%, 300% 300%;
+  border: 2px solid transparent;
+  animation: nudgeBorder 6s linear infinite, riseIn 0.45s ease both;
+}
+
+@keyframes nudgeBorder {
+  0%   { background-position: 0 0, 0% 50%; }
+  100% { background-position: 0 0, 300% 50%; }
+}
+
+.nudge-emoji {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: var(--bg);
+  font-size: 26px;
+  animation: nudgeWave 2.8s ease-in-out infinite;
+}
+
+@keyframes nudgeWave {
+  0%, 60%, 100% { transform: none; }
+  70% { transform: rotate(-12deg) scale(1.1); }
+  80% { transform: rotate(10deg) scale(1.1); }
+  90% { transform: rotate(-4deg); }
+}
+
+.nudge-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  min-width: 0;
+}
+
+.nudge-text strong {
+  font-size: 15px;
+}
+
+.nudge-text small {
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+.nudge-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+}
+
+.nudge-actions .btn {
+  padding: 9px 16px;
+}
+
+.nudge-zero {
+  padding: 6px 0;
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--success);
+  cursor: pointer;
+}
+
+/* ===== CHIP STREAK DI KARTU SALDO ===== */
+.dash-hero-top {
+  position: relative;
+}
+
+.streak-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  align-self: flex-start;
+  padding: 6px 12px 6px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  font: inherit;
+  font-size: 14px;
+  color: #fff;
+  cursor: pointer;
+  filter: grayscale(0.8);
+  opacity: 0.85;
+  transition: filter 0.3s, opacity 0.3s;
+}
+
+/* Menyala penuh jika hari ini sudah mencatat */
+.streak-chip.lit {
+  filter: none;
+  opacity: 1;
+  background: linear-gradient(135deg, rgba(251, 146, 60, 0.35), rgba(244, 63, 94, 0.3));
+  box-shadow: 0 0 18px -4px rgba(251, 146, 60, 0.8);
+}
+
+.streak-fire {
+  display: inline-block;
+  font-size: 16px;
+}
+
+.streak-chip.lit .streak-fire {
+  animation: fireFlicker 1.6s ease-in-out infinite;
+}
+
+@keyframes fireFlicker {
+  0%, 100% { transform: scale(1) rotate(0); }
+  25%      { transform: scale(1.12) rotate(-6deg); }
+  50%      { transform: scale(0.95) rotate(4deg); }
+  75%      { transform: scale(1.08) rotate(-2deg); }
+}
+
+/* Laptop: tombol "Catat Transaksi" + chip di kanan. HP: chip saja di kanan */
+.dash-hero-top .btn-light {
+  margin-left: auto;
+}
+
+@media (max-width: 768px) {
+  .dash-hero-top .streak-chip {
+    margin-left: auto;
+  }
+}
+
+/* ===== KARTU "SEGERA TERBUKA" ===== */
+.unlock-card {
+  border-style: dashed;
+}
+
+.unlock-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.unlock-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--bg);
+  font: inherit;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+}
+
+.unlock-emoji {
+  font-size: 22px;
+  filter: grayscale(0.6);
+}
+
+.unlock-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.unlock-info strong {
+  font-size: 14px;
+}
+
+.unlock-info small {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.unlock-info .mini-bar span {
+  background: linear-gradient(90deg, #f59e0b, #ec4899);
+}
+
+.unlock-row > .material-symbols-rounded {
+  color: var(--muted);
+}
+
+.unlock-all {
+  margin-top: 10px;
+  color: var(--muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nudge,
+  .nudge-emoji,
+  .streak-chip.lit .streak-fire {
+    animation: none;
+  }
+}
+
+/* ===== LEBIH TENANG: hanya satu hal yang bergerak per layar ===== */
+/* (kartu saldo, judul halaman, logo, menu, dan tombol ➕ kini diam)
+   Diawali "html body" supaya mengalahkan animasi.css yang dimuat sesudah file ini. */
+html body .dash-hero,
+html body #page-dashboard.active > .dash-hero {
+  animation: riseIn 0.45s ease both;
+}
+
+html body .dash-hero::after {
+  animation: none;
+  opacity: 0;
+}
+
+html body #page-title,
+html body .brand-logo,
+html body .nav-item.active,
+html body .more-item.active,
+html body .fab {
+  animation: none;
+}
+
+/* Banner rekap di slot pemberitahuan */
+#dash-nudge .recap-banner {
+  animation: gradientShift 8s ease infinite, riseIn 0.45s ease both;
+}

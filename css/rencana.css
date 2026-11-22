@@ -1,0 +1,131 @@
+/* =====================================================
+   RENCANA.CSS — Status satu kalimat, kartu kiriman & rencana
+   ===================================================== */
+
+/* ===== STATUS DI KARTU SALDO ===== */
+.hero-status {
+  position: relative;
+  margin-top: 14px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.14);
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: #fff;
+}
+
+.hero-status strong {
+  font-weight: 800;
+  white-space: nowrap;
+  transition: filter 0.35s ease;
+}
+
+#page-dashboard.money-hidden .hero-status strong {
+  filter: blur(6px);
+}
+
+/* ===== KARTU KIRIMAN & RENCANA (slot pemberitahuan) ===== */
+.transfer-card,
+.plan-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  border: 2px solid transparent;
+  border-radius: var(--radius);
+  background:
+    linear-gradient(var(--surface), var(--surface)) padding-box,
+    linear-gradient(120deg, #ec4899, #f59e0b, #10b981) border-box;
+  animation: riseIn 0.45s ease both;
+}
+
+.plan-card {
+  background:
+    linear-gradient(var(--surface), var(--surface)) padding-box,
+    linear-gradient(120deg, #3b82f6, #8b5cf6, #06b6d4) border-box;
+}
+
+.transfer-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.transfer-head > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.transfer-head strong {
+  font-size: 15px;
+}
+
+.transfer-head small {
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+.transfer-emoji {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: var(--bg);
+  font-size: 26px;
+  animation: giftShake 2.8s ease-in-out infinite;
+}
+
+.transfer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.transfer-actions .btn {
+  padding: 9px 14px;
+}
+
+.transfer-later {
+  padding: 6px 4px;
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: 13px;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.transfer-other {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+}
+
+.plan-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.plan-lines div {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: 10px;
+  background: var(--bg);
+  font-size: 13.5px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .transfer-card,
+  .plan-card,
+  .transfer-emoji {
+    animation: none;
+  }
+}

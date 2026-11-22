@@ -11,7 +11,9 @@ const CATEGORY_EMOJI = {
   'out-jajan': '🍢', 'out-mandi': '🧴', 'out-laundry': '🧺', 'out-rumah': '🧹',
   'out-print': '🖨️', 'out-atk': '✏️', 'out-praktikum': '🔬', 'out-proyek': '🛠️',
   'out-bensin': '⛽', 'out-kendaraan': '🏍️', 'out-pakaian': '👕', 'out-rawat': '💈',
-  'out-kesehatan': '💊', 'out-hiburan': '🎮', 'out-nongkrong': '☕', 'out-rokok': '🚬',
+  'out-kesehatan': '💊', 'out-hiburan': '🎮', 'out-nongkrong': '🧋', 'out-rokok': '🚬',
+  'out-kos': '🛏️', 'out-ojol': '🛵', 'out-parkir': '🅿️', 'out-kopi': '☕', 'out-pulsa': '📶',
+  'out-langganan': '🎧', 'out-admin': '🧾',
   'out-tabungan': '🐷', 'out-darurat': '🛟', 'out-investasi': '📚', 'out-lainnya': '📦',
   'in-bulanan': '💌', 'in-beasiswa': '🎓', 'in-sampingan': '💼', 'in-hadiah': '🎁', 'in-lainnya': '💰'
 };
@@ -69,11 +71,11 @@ function quickUsedToday(templateId) {
 
 // Semua bagian yang menampilkan transaksi ikut diperbarui
 function refreshAfterTransactionChange() {
-  renderRecentTransactions();
   updateBackupInfo();
   renderQuickAll();
   if (document.getElementById('page-dashboard').classList.contains('active')) renderDashboard();
   if (typeof renderCalendarIfOpen === 'function') renderCalendarIfOpen();
+  if (typeof checkStreakMilestone === 'function') checkStreakMilestone();
 }
 
 
@@ -152,7 +154,6 @@ function renderQuick(containerId) {
 
 function renderQuickAll() {
   renderQuick('dash-quick');
-  renderQuick('tx-quick');
 }
 
 
@@ -171,7 +172,8 @@ function recordQuick(templateId, chip) {
     categoryId: t.categoryId,
     source: '',
     note: '',
-    quickId: t.id
+    quickId: t.id,
+    walletId: t.walletId && findWallet(t.walletId) ? t.walletId : getDefaultWalletId()
   };
 
   appData.transactions.push(tx);
@@ -211,18 +213,7 @@ function flyAmount(chip, text) {
 function openQuickInForm(templateId) {
   const t = findQuickTemplate(templateId);
   if (!t) return;
-
-  showPage('transaksi');
-  switchTransactionTab('catat');
-  resetTransactionForm();
-  setTransactionType('keluar');
-  txCategory.value = t.categoryId;
-  txAmount.value = t.amount;
-  txNote.value = '';
-  updateAmountPreview();
-  txAmount.focus();
-  txAmount.select();
-  showToast('Ubah nominalnya, lalu Simpan');
+  openFab({ template: t });
 }
 
 
@@ -303,6 +294,11 @@ function renderQuickManager() {
             ${categoryOptionsHtml('keluar', data.categoryId)}
           </select>
         </div>
+        <div class="field field-full">
+          <label>Bayar pakai</label>
+          <input type="hidden" id="qf-wallet" value="${data.walletId && findWallet(data.walletId) ? data.walletId : getDefaultWalletId()}">
+          ${walletPickerHtml('qf-wallet', data.walletId && findWallet(data.walletId) ? data.walletId : getDefaultWalletId())}
+        </div>
       </div>
       <div class="button-row">
         <button type="submit" class="btn btn-primary">
@@ -331,16 +327,17 @@ function saveQuickForm(event) {
   const amount = Math.round(Number(document.getElementById('qf-amount').value));
   const categoryId = document.getElementById('qf-category').value;
   const emoji = document.getElementById('qf-emoji').value || '💸';
+  const walletId = document.getElementById('qf-wallet').value;
 
   if (!label) { showToast('Isi nama tombol'); return; }
   if (!amount || amount <= 0) { showToast('Isi nominal'); return; }
   if (!categoryId) { showToast('Pilih kategori'); return; }
 
   if (quickEditingId) {
-    Object.assign(findQuickTemplate(quickEditingId), { label: label, amount: amount, categoryId: categoryId, emoji: emoji });
+    Object.assign(findQuickTemplate(quickEditingId), { label: label, amount: amount, categoryId: categoryId, emoji: emoji, walletId: walletId });
     showToast('Tombol diperbarui');
   } else {
-    appData.quickTemplates.push({ id: generateId(), label: label, amount: amount, categoryId: categoryId, emoji: emoji });
+    appData.quickTemplates.push({ id: generateId(), label: label, amount: amount, categoryId: categoryId, emoji: emoji, walletId: walletId });
     showToast('Tombol ditambahkan');
   }
 

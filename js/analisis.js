@@ -99,14 +99,14 @@ function analyzeMonth(anchor) {
     if (safe.ready) {
       if (safe.usable < 0) {
         add('bad',
-          `Uang pakai kurang ${formatRupiah(Math.abs(safe.usable))} untuk menutup kebutuhan wajib, tagihan, dan rencana tabungan sampai ${formatShortDate(safe.nextDate)}.`,
-          'Tunda pengeluaran yang tidak wajib, lalu tinjau ulang alokasi di menu Uang Bulanan.');
+          `Uang di dompet kurang ${formatRupiah(Math.abs(safe.usable))} untuk menutup wajib bayar, tagihan, dan rencana tabungan sampai ${formatShortDate(safe.nextDate)}.`,
+          'Tunda pengeluaran yang tidak wajib, lalu tinjau ulang rencana bulan ini di menu Uang Bulanan.');
       }
 
       if (safe.daysLeft > 0 && safe.spentToday > safe.dailyLimit) {
         add('bad',
-          `Pengeluaran hari ini ${formatRupiah(safe.spentToday)} sudah melebihi batas harian ${formatRupiah(safe.dailyLimit)}.`,
-          'Kurangi pengeluaran besok agar rata-ratanya kembali di bawah batas harian.');
+          `Pengeluaran hari ini ${formatRupiah(safe.spentToday)} sudah melebihi jatah harian ${formatRupiah(safe.dailyLimit)}.`,
+          'Kurangi pengeluaran besok agar rata-ratanya kembali di bawah jatah harian.');
       }
 
       if (safe.averageDaily > 0 && safe.daysLeft > 0 && safe.usable >= 0) {

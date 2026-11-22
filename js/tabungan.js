@@ -9,7 +9,7 @@
 //   − Pakai      : uang diambil dari pos untuk suatu keperluan
 //
 // "Saldo awal" dan "Pakai" disimpan di appData.fundMovements,
-// TIDAK sebagai transaksi, sehingga tidak mengubah uang pakai
+// TIDAK sebagai transaksi, sehingga tidak mengubah uang di dompet
 // maupun anggaran mingguan.
 
 if (!Array.isArray(appData.fundMovements)) appData.fundMovements = [];
@@ -86,11 +86,13 @@ function getTotalFunds() {
   return FUND_KEYS.reduce(function (sum, key) { return sum + getFundBalance(key); }, 0);
 }
 
-// Uang pakai = semua pemasukan dikurangi semua uang keluar (termasuk yang disisihkan)
+// Uang di dompet = semua pemasukan dikurangi semua uang keluar (termasuk yang disisihkan)
 function getWalletBalance() {
-  return appData.transactions.reduce(function (sum, tx) {
+  const fromTransactions = appData.transactions.reduce(function (sum, tx) {
     return sum + (tx.type === 'masuk' ? tx.amount : -tx.amount);
   }, 0);
+  // + saldo awal dompet & penyesuaian saldo (dompet.js)
+  return fromTransactions + (typeof getWalletExtras === 'function' ? getWalletExtras() : 0);
 }
 
 
@@ -102,19 +104,19 @@ function renderFundSummary() {
   fundSummaryCard.innerHTML = `
     <h2 class="card-title">Ringkasan Dana</h2>
     <div class="fund-total">
-      <span>Total dana tersimpan</span>
+      <span>Total tabungan</span>
       <strong>${formatRupiah(totalFunds)}</strong>
     </div>
     <div class="stat-grid">
       <div class="stat">
-        <span>Uang pakai</span>
+        <span>Uang di dompet</span>
         <strong class="${wallet < 0 ? 'text-danger' : ''}">${formatRupiah(wallet)}</strong>
         <small>Pemasukan dikurangi semua uang keluar</small>
       </div>
       <div class="stat">
         <span>Total saldo keseluruhan</span>
         <strong>${formatRupiah(wallet + totalFunds)}</strong>
-        <small>Uang pakai + semua dana</small>
+        <small>Uang di dompet + semua dana</small>
       </div>
     </div>
   `;
@@ -238,7 +240,7 @@ function openFundForm(mode, key) {
   if (mode === 'setor') {
     fundModalTitle.textContent = 'Setor ke ' + label;
     html = `
-      <p class="card-text">Uang dipindahkan dari uang pakai ke ${label} dan tercatat sebagai transaksi "Disisihkan".</p>
+      <p class="card-text">Uang dipindahkan dari uang di dompet ke ${label} dan tercatat sebagai transaksi "Disisihkan".</p>
       <div class="form-grid">
         ${amountFieldHtml('Nominal setor')}
         ${dateTimeFieldsHtml()}
@@ -249,7 +251,7 @@ function openFundForm(mode, key) {
       </div>
       <label class="check-row">
         <input type="checkbox" id="fund-initial">
-        Saldo awal — uang yang sudah ada sebelum memakai aplikasi (tidak mengurangi uang pakai)
+        Saldo awal — uang yang sudah ada sebelum memakai aplikasi (tidak mengurangi uang di dompet)
       </label>
     `;
   }
@@ -275,7 +277,7 @@ function openFundForm(mode, key) {
           <input type="text" id="fund-note" maxlength="100" placeholder="Contoh: Ganti oli dan kampas rem">
         </div>
       </div>
-      <p class="hint">Pemakaian dana tidak mengurangi uang pakai maupun anggaran mingguan.</p>
+      <p class="hint">Pemakaian dana tidak mengurangi uang di dompet maupun anggaran mingguan.</p>
     `;
   }
 

@@ -1,7 +1,7 @@
 // ===== DAFTAR JUDUL HALAMAN =====
 const pageTitles = {
-  dashboard: 'Dashboard',
-  transaksi: 'Transaksi',
+  dashboard: 'Beranda',
+  transaksi: 'Riwayat Transaksi',
   anggaran: 'Anggaran Mingguan',
   bulanan: 'Uang Bulanan',
   tabungan: 'Tabungan',
@@ -12,7 +12,7 @@ const pageTitles = {
 };
 
 // Halaman yang ada di dalam menu "Lainnya" (khusus HP)
-const morePages = ['bulanan', 'tagihan', 'utang', 'laporan', 'pengaturan'];
+const morePages = ['bulanan', 'anggaran', 'tagihan', 'utang', 'pengaturan'];
 
 const moreButton = document.getElementById('more-button');
 const moreSheet = document.getElementById('more-sheet');

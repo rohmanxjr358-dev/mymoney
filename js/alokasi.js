@@ -23,12 +23,16 @@ function toAmount(value) {
   return Math.max(0, Math.round(Number(value) || 0));
 }
 
-// Alokasi awal: iuran kontrakan sebagai kebutuhan wajib pertama
+// Alokasi awal: biaya tempat tinggal sebagai wajib bayar pertama
+// (sewa kos jika ada, lalu iuran bulanan)
 function createDefaultAllocations() {
+  const wajib = [];
+  ['out-kos', 'out-iuran'].forEach(function (id) {
+    const category = findCategory(id);
+    if (category) wajib.push({ id: generateId(), name: category.name, categoryId: id, amount: 0 });
+  });
   return {
-    wajib: [
-      { id: generateId(), name: 'Iuran Kontrakan Bulanan', categoryId: 'out-iuran', amount: 0 }
-    ],
+    wajib: wajib,
     funds: { tabungan: 0, darurat: 0, investasi: 0 }
   };
 }
@@ -102,7 +106,7 @@ function renderWajibRows() {
   const container = document.getElementById('alloc-wajib-list');
 
   if (allocDraft.wajib.length === 0) {
-    container.innerHTML = '<p class="alloc-empty">Belum ada kebutuhan wajib.</p>';
+    container.innerHTML = '<p class="alloc-empty">Belum ada wajib bayar.</p>';
     return;
   }
 
@@ -148,17 +152,17 @@ function updateAllocSummary() {
       <span class="seg-sisa" style="width:${pct(totals.remaining)}%"></span>
     </div>
     <div class="alloc-lines">
-      <div class="alloc-line"><span class="dot seg-wajib"></span>Kebutuhan wajib<strong>${formatRupiah(totals.wajib)}</strong></div>
+      <div class="alloc-line"><span class="dot seg-wajib"></span>Wajib bayar<strong>${formatRupiah(totals.wajib)}</strong></div>
       <div class="alloc-line"><span class="dot seg-sisih"></span>Disisihkan<strong>${formatRupiah(totals.sisih)}</strong></div>
       <div class="alloc-line total ${isOver ? 'negative' : ''}">
         <span class="dot seg-sisa"></span>Sisa untuk anggaran mingguan
         <strong>${isOver ? '−' + formatRupiah(Math.abs(totals.remaining)) : formatRupiah(totals.remaining)}</strong>
       </div>
     </div>
-    ${isOver ? `<p class="alloc-warning">Total alokasi melebihi uang tersedia sebesar ${formatRupiah(Math.abs(totals.remaining))}. Kurangi salah satu nominal.</p>` : ''}
+    ${isOver ? `<p class="alloc-warning">Total rencana melebihi uang tersedia sebesar ${formatRupiah(Math.abs(totals.remaining))}. Kurangi salah satu nominal.</p>` : ''}
   `;
 
-  // --- Progres realisasi tiap kebutuhan wajib ---
+  // --- Progres realisasi tiap wajib bayar ---
   allocDraft.wajib.forEach(function (item) {
     const el = allocCard.querySelector(`[data-progress-wajib="${item.id}"]`);
     if (!el) return;
@@ -185,7 +189,7 @@ function renderAllocation() {
     allocPeriodId = null;
     allocDraft = null;
     allocCard.innerHTML = `
-      <h2 class="card-title">Alokasi Uang Bulanan</h2>
+      <h2 class="card-title">Rencana Bulan Ini</h2>
       <p class="empty-state">Catat uang bulanan terlebih dahulu, lalu bagi di sini.</p>
     `;
     return;
@@ -229,11 +233,11 @@ function renderAllocation() {
 
   allocCard.innerHTML = `
     <div class="card-header">
-      <h2 class="card-title">Alokasi Uang Bulanan</h2>
+      <h2 class="card-title">Rencana Bulan Ini</h2>
       <select class="mini-select" id="alloc-period" title="Pilih periode">${periodOptions}</select>
     </div>
     <p class="card-text">
-      Rencana pembagian uang. Alokasi <strong>tidak</strong> dihitung sebagai pengeluaran —
+      Rencana pembagian uang. Rencana ini <strong>tidak</strong> dihitung sebagai pengeluaran —
       uang baru berkurang saat transaksinya dicatat.
     </p>
 
@@ -242,11 +246,11 @@ function renderAllocation() {
       <strong>${formatRupiah(getAvailableMoney(period))}</strong>
     </div>
 
-    <h3 class="alloc-section-title">Kebutuhan wajib</h3>
+    <h3 class="alloc-section-title">Wajib bayar</h3>
     <div id="alloc-wajib-list"></div>
     <button type="button" class="link-btn" data-alloc="add-wajib">
       <span class="material-symbols-rounded">add</span>
-      Tambah kebutuhan wajib
+      Tambah wajib bayar
     </button>
 
     <h3 class="alloc-section-title">Disisihkan</h3>
@@ -257,7 +261,7 @@ function renderAllocation() {
     <div class="button-row">
       <button type="button" class="btn btn-primary" data-alloc="save">
         <span class="material-symbols-rounded">check</span>
-        Simpan Alokasi
+        Simpan Rencana
       </button>
       <button type="button" class="btn btn-secondary" data-alloc="reset">
         Batalkan Perubahan
@@ -273,7 +277,7 @@ function renderAllocation() {
 // ===== BUKA ALOKASI PERIODE TERTENTU (dari tombol di riwayat) =====
 function openAllocation(periodId) {
   if (allocDirty && periodId !== allocPeriodId &&
-      !confirm('Perubahan alokasi yang belum disimpan akan hilang. Lanjutkan?')) {
+      !confirm('Perubahan rencana yang belum disimpan akan hilang. Lanjutkan?')) {
     return;
   }
   allocPeriodId = periodId;
@@ -289,7 +293,7 @@ function saveAllocation() {
 
   const totals = getAllocationTotals(period, allocDraft);
   if (totals.remaining < 0) {
-    showToast('Total alokasi melebihi uang tersedia');
+    showToast('Total rencana melebihi uang tersedia');
     return;
   }
 
@@ -299,7 +303,7 @@ function saveAllocation() {
     .map(function (item) {
       return {
         id: item.id,
-        name: item.name.trim() || 'Kebutuhan wajib',
+        name: item.name.trim() || 'Wajib bayar',
         categoryId: item.categoryId || '',
         amount: toAmount(item.amount)
       };
@@ -317,7 +321,7 @@ function saveAllocation() {
 
   saveData();
   renderAllocation();
-  showToast('Alokasi ' + formatMonthYear(period.receivedDate) + ' disimpan');
+  showToast('Rencana ' + formatMonthYear(period.receivedDate) + ' disimpan');
 }
 
 
@@ -348,7 +352,7 @@ allocCard.addEventListener('change', function (event) {
   if (event.target.id !== 'alloc-period') return;
   const newId = event.target.value;
 
-  if (allocDirty && !confirm('Perubahan alokasi yang belum disimpan akan hilang. Lanjutkan?')) {
+  if (allocDirty && !confirm('Perubahan rencana yang belum disimpan akan hilang. Lanjutkan?')) {
     event.target.value = allocPeriodId;
     return;
   }

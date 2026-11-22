@@ -509,6 +509,7 @@ function reportRows(report) {
       Jenis: kindLabel,
       Kategori: cat ? cat.name : 'Kategori terhapus',
       Grup: cat ? cat.group : '',
+      Dompet: walletName(txWalletId(tx)),
       Nominal: tx.type === 'masuk' ? tx.amount : -tx.amount,
       Sumber: tx.source || '',
       Keterangan: tx.note || ''

@@ -51,7 +51,7 @@ function getPeriodWeeks(period) {
 
 // ===== PENGELUARAN DALAM SATU PEKAN =====
 // Tidak dihitung: uang yang disisihkan (tabungan, dll.)
-// dan kategori yang sudah masuk "Kebutuhan wajib" di alokasi.
+// dan kategori yang sudah masuk "Wajib bayar" di alokasi.
 function getWajibCategoryIds(period) {
   if (!period.allocations) return [];
   return period.allocations.wajib
@@ -248,7 +248,7 @@ function updateBudgetSummary() {
       <div class="alloc-line">Sisa untuk anggaran mingguan<strong>${formatRupiah(pool)}</strong></div>
       <div class="alloc-line">Total anggaran ${statuses.length} pekan<strong>${formatRupiah(total)}</strong></div>
       <div class="alloc-line total ${isOver ? 'negative' : ''}">
-        Belum dialokasikan
+        Belum direncanakan
         <strong>${isOver ? '−' + formatRupiah(Math.abs(unallocated)) : formatRupiah(unallocated)}</strong>
       </div>
     </div>
@@ -323,14 +323,14 @@ function renderBudgetEditor() {
     </div>
     <p class="card-text">
       Tentukan sendiri nominal tiap pekan. Uang yang disisihkan ke tabungan dan
-      pengeluaran kategori kebutuhan wajib tidak dihitung di sini.
+      pengeluaran kategori wajib bayar tidak dihitung di sini.
     </p>
 
     <div class="alloc-available">
       <span>Sisa untuk anggaran mingguan</span>
       <strong>${formatRupiah(getWeeklyPool(period))}</strong>
     </div>
-    ${period.allocations ? '' : '<p class="inline-hint">Alokasi periode ini belum disimpan. Atur dulu di menu Uang Bulanan agar angka di atas akurat.</p>'}
+    ${period.allocations ? '' : '<p class="inline-hint">Rencana bulan ini belum disimpan. Atur dulu di menu Uang Bulanan agar angka di atas akurat.</p>'}
 
     <div class="week-list">${weekRows}</div>
 

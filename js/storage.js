@@ -79,6 +79,63 @@ function createEmptyData() {
 }
 
 
+// ===== CADANGAN OTOMATIS (2 hari terakhir) =====
+// Setiap hari, saat aplikasi pertama kali dibuka, data kemarin disalin ke
+// "mymoney-auto-1" (dan yang lebih lama ke "mymoney-auto-2").
+// Jika pembaruan aplikasi / data bermasalah, data bisa dikembalikan dari Pengaturan.
+const AUTO_BACKUP_KEYS = [STORAGE_KEY + '-auto-1', STORAGE_KEY + '-auto-2'];
+
+function readAutoBackup(key) {
+  try {
+    const box = JSON.parse(localStorage.getItem(key));
+    return box && box.data ? box : null;
+  } catch (e) {
+    return null;
+  }
+}
+
+function rotateAutoBackup(rawData) {
+  const today = new Date().toISOString().slice(0, 10);
+  const latest = readAutoBackup(AUTO_BACKUP_KEYS[0]);
+  if (latest && latest.savedOn === today) return;   // hari ini sudah dicadangkan
+
+  try {
+    if (latest) localStorage.setItem(AUTO_BACKUP_KEYS[1], localStorage.getItem(AUTO_BACKUP_KEYS[0]));
+    localStorage.setItem(AUTO_BACKUP_KEYS[0], JSON.stringify({ savedOn: today, savedAt: new Date().toISOString(), data: rawData }));
+  } catch (e) {
+    console.warn('Cadangan otomatis dilewati (memori penuh).', e);
+  }
+}
+
+
+// ===== PERIKSA & RAPIKAN DATA (mencegah aplikasi macet karena data rusak) =====
+function sanitizeData(data) {
+  const clean = Object.assign(createEmptyData(), data);
+  if (!clean.settings || typeof clean.settings !== 'object') clean.settings = { expectedTransferDay: null };
+  if (!Array.isArray(clean.categories) || !clean.categories.length) clean.categories = createEmptyData().categories;
+  if (!Array.isArray(clean.transactions)) clean.transactions = [];
+
+  let removed = 0;
+  clean.transactions = clean.transactions.filter(function (tx) {
+    const ok = tx && tx.id && (tx.type === 'masuk' || tx.type === 'keluar') &&
+      /^\d{4}-\d{2}-\d{2}$/.test(tx.date) && isFinite(Number(tx.amount));
+    if (!ok) removed++;
+    return ok;
+  });
+  clean.transactions.forEach(function (tx) {
+    tx.amount = Math.round(Number(tx.amount));
+    if (!tx.time) tx.time = '00:00';
+    if (!tx.createdAt) tx.createdAt = tx.date + 'T00:00:00.000Z';
+  });
+
+  if (removed) {
+    console.warn(removed + ' transaksi rusak dilewati.');
+    clean.settings.repairedCount = (clean.settings.repairedCount || 0) + removed;
+  }
+  return clean;
+}
+
+
 // ===== MEMBACA DATA DARI BROWSER =====
 function loadData() {
   const saved = localStorage.getItem(STORAGE_KEY);
@@ -90,12 +147,20 @@ function loadData() {
 
   try {
     const parsed = JSON.parse(saved);
-    // Gabungkan dengan data kosong agar bagian baru (fitur baru) selalu ada
-    return Object.assign(createEmptyData(), parsed);
+    rotateAutoBackup(parsed);
+    return sanitizeData(parsed);
   } catch (error) {
-    // Data rusak → simpan salinannya dulu supaya tidak hilang, lalu mulai baru
+    // Data rusak → simpan salinannya, lalu coba pakai cadangan otomatis terakhir
     localStorage.setItem(STORAGE_KEY + '-rusak-' + Date.now(), saved);
     console.error('Data tidak bisa dibaca. Salinan disimpan.', error);
+    for (let i = 0; i < AUTO_BACKUP_KEYS.length; i++) {
+      const box = readAutoBackup(AUTO_BACKUP_KEYS[i]);
+      if (box) {
+        const restored = sanitizeData(box.data);
+        restored.settings.recoveredFromAuto = box.savedAt;
+        return restored;
+      }
+    }
     return createEmptyData();
   }
 }
@@ -103,7 +168,24 @@ function loadData() {
 
 // ===== MENYIMPAN DATA KE BROWSER =====
 function saveData() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+  // Transaksi yang dibuat fitur lain otomatis diberi dompet (dompet.js)
+  if (typeof stampWallets === 'function') stampWallets();
+
+  const text = JSON.stringify(appData);
+  try {
+    localStorage.setItem(STORAGE_KEY, text);
+  } catch (error) {
+    // Memori browser penuh → buang cadangan otomatis lama, lalu coba lagi
+    AUTO_BACKUP_KEYS.slice().reverse().forEach(function (key) { localStorage.removeItem(key); });
+    try {
+      localStorage.setItem(STORAGE_KEY, text);
+    } catch (again) {
+      console.error('Gagal menyimpan data.', again);
+      if (typeof showToast === 'function') {
+        showToast('⚠️ Memori penuh, data TIDAK tersimpan. Unduh backup sekarang!');
+      }
+    }
+  }
 }
 
 

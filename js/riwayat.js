@@ -3,7 +3,6 @@
 // =====================================================
 
 const txTabButtons = document.querySelectorAll('#tx-tabs .tab');
-const txSeeAllButton = document.getElementById('tx-see-all');
 
 const histSearch = document.getElementById('hist-search');
 const histType = document.getElementById('hist-type');
@@ -26,6 +25,9 @@ let historyLimit = HISTORY_PAGE_SIZE;
 
 // ===== PINDAH TAB: CATAT / RIWAYAT =====
 function switchTransactionTab(tabName) {
+  // Form "Catat" & Kalender sudah pindah (tombol ➕ dan Laporan) → hanya ada Riwayat.
+  // Panggilan lama switchTransactionTab('catat') sebelum startEdit cukup diabaikan.
+  if (tabName !== 'riwayat') return;
   txTabButtons.forEach(function (btn) {
     btn.classList.toggle('active', btn.dataset.tab === tabName);
   });
@@ -113,6 +115,16 @@ function fillHistoryCategoryOptions() {
   histCategory.innerHTML = html;
   histCategory.value = selected;
   if (histCategory.value !== selected) histCategory.value = '';
+
+  // Pilihan dompet (hanya tampil jika dompet lebih dari satu)
+  const walletSelect = document.getElementById('hist-wallet');
+  const walletSelected = walletSelect.value;
+  walletSelect.innerHTML = '<option value="">Semua dompet</option>' + appData.wallets.map(function (w) {
+    return `<option value="${w.id}">${escapeHtml(w.name)}</option>`;
+  }).join('');
+  walletSelect.value = walletSelected;
+  if (walletSelect.value !== walletSelected) walletSelect.value = '';
+  document.getElementById('hist-wallet-field').hidden = appData.wallets.length < 2;
 }
 
 
@@ -134,6 +146,10 @@ function getFilteredTransactions() {
 
     // Filter kategori
     if (categoryId && tx.categoryId !== categoryId) return false;
+
+    // Filter dompet
+    const walletFilter = document.getElementById('hist-wallet').value;
+    if (walletFilter && txWalletId(tx) !== walletFilter) return false;
 
     // Filter tanggal
     if (range.from && tx.date < range.from) return false;
@@ -180,7 +196,8 @@ function historyItemHtml(tx, showDate) {
   const icons = { masuk: 'south_west', keluar: 'north_east', sisih: 'savings' };
   const sign = tx.type === 'masuk' ? '+' : '−';
   const details = [tx.source, tx.note].filter(Boolean).join(' · ');
-  const meta = showDate ? formatShortDate(tx.date) + ' · ' + tx.time : tx.time;
+  let meta = showDate ? formatShortDate(tx.date) + ' · ' + tx.time : tx.time;
+  if (appData.wallets.length > 1) meta += ' · ' + escapeHtml(walletName(txWalletId(tx)));
 
   return `
     <div class="tx-item" data-id="${tx.id}">
@@ -295,6 +312,7 @@ function resetHistoryFilter() {
   histSearch.value = '';
   histType.value = 'semua';
   histCategory.value = '';
+  document.getElementById('hist-wallet').value = '';
   histPeriod.value = 'semua';
   histSort.value = 'terbaru';
   histFrom.value = '';
@@ -312,13 +330,10 @@ txTabButtons.forEach(function (btn) {
   });
 });
 
-txSeeAllButton.addEventListener('click', function () {
-  switchTransactionTab('riwayat');
-});
-
 histSearch.addEventListener('input', onFilterChange);
 histType.addEventListener('change', onFilterChange);
 histCategory.addEventListener('change', onFilterChange);
+document.getElementById('hist-wallet').addEventListener('change', onFilterChange);
 histSort.addEventListener('change', onFilterChange);
 histPeriod.addEventListener('change', onPeriodChange);
 histFrom.addEventListener('change', onFilterChange);
@@ -346,3 +361,9 @@ histList.addEventListener('click', function (event) {
     renderHistory();
   }
 });
+
+// Setiap kali halaman Riwayat dibuka, tampilkan data terbaru
+document.querySelectorAll('[data-page="transaksi"]').forEach(function (btn) {
+  btn.addEventListener('click', function () { switchTransactionTab('riwayat'); });
+});
+if (location.hash === '#transaksi') switchTransactionTab('riwayat');

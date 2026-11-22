@@ -6,7 +6,7 @@
 //     payments: [{ id, amount, date }], settledAt, createdAt }
 // 'piutang' = teman berutang padaku (uangku ada di teman)
 // 'utang'   = aku berutang pada teman
-// Catatan ini TERPISAH dari saldo: tidak mengubah "Uang pakai".
+// Catatan ini TERPISAH dari saldo: tidak mengubah "Uang di dompet".
 
 if (!Array.isArray(appData.debts)) {
   appData.debts = [];
@@ -297,9 +297,9 @@ function renderPersonModal() {
       <form class="debt-pay-form" data-pay-form="${d.id}" novalidate>
         <div class="input-prefix">
           <span>Rp</span>
-          <input type="number" id="pay-amount" inputmode="numeric" min="1" step="1" value="${remaining}">
+          <input type="number" id="dpay-amount" inputmode="numeric" min="1" step="1" value="${remaining}">
         </div>
-        <input type="date" id="pay-date" value="${today}">
+        <input type="date" id="dpay-date" value="${today}">
         <button type="submit" class="btn btn-primary">Simpan</button>
       </form>
     ` : '';
@@ -704,7 +704,7 @@ debtModal.addEventListener('click', function (event) {
   if (pay) {
     debtPayingId = debtPayingId === pay.dataset.debtPay ? null : pay.dataset.debtPay;
     renderPersonModal();
-    const input = document.getElementById('pay-amount');
+    const input = document.getElementById('dpay-amount');
     if (input) input.select();
     return;
   }
@@ -736,8 +736,8 @@ debtModal.addEventListener('submit', function (event) {
   if (form.id === 'split-form') saveSplitForm();
   if (form.dataset.payForm) {
     addDebtPayment(form.dataset.payForm,
-      Number(document.getElementById('pay-amount').value),
-      document.getElementById('pay-date').value);
+      Number(document.getElementById('dpay-amount').value),
+      document.getElementById('dpay-date').value);
   }
 });
 

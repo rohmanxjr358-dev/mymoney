@@ -356,7 +356,8 @@ html[data-theme="dark"] .pattern-col.top .pattern-track span {
 /* ===== HP ===== */
 @media (max-width: 768px) {
   /* Tiga tab (Catat / Riwayat / Kalender) dibagi rata */
-  #tx-tabs .tab {
+  #tx-tabs .tab,
+  #report-tabs .tab {
     flex: 1;
     justify-content: center;
     gap: 4px;
@@ -364,7 +365,8 @@ html[data-theme="dark"] .pattern-col.top .pattern-track span {
     font-size: 13px;
   }
 
-  #tx-tabs .tab .material-symbols-rounded {
+  #tx-tabs .tab .material-symbols-rounded,
+  #report-tabs .tab .material-symbols-rounded {
     font-size: 18px;
   }
 
@@ -411,4 +413,45 @@ html[data-theme="dark"] .pattern-col.top .pattern-track span {
   .pattern-track span {
     animation: none;
   }
+}
+
+/* ===== HARI BELUM DICATAT vs NOL RUPIAH ===== */
+.cal-cell.unrecorded {
+  border: 2px dashed var(--border);
+  background: transparent;
+  color: var(--muted);
+}
+
+.cal-cell.zero {
+  background: var(--success-soft);
+}
+
+.cal-cell.zero .cal-amt {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--success);
+  opacity: 1;
+}
+
+.cal-key {
+  display: inline-grid;
+  place-items: center;
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  font-size: 9px;
+  font-style: normal;
+  font-weight: 800;
+}
+
+.cal-key.zero    { background: var(--success-soft); color: var(--success); }
+.cal-key.missing { border: 1.5px dashed var(--muted); color: var(--muted); }
+
+.cal-stat.missing strong {
+  color: var(--muted);
+}
+
+.cal-mark-zero {
+  display: inline-flex;
+  margin-top: 8px;
 }

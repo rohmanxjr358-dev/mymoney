@@ -45,3 +45,24 @@
   color: var(--muted);
   overflow-wrap: anywhere;
 }
+
+/* Cadangan otomatis */
+.auto-backup-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.auto-backup-list .info-row {
+  align-items: center;
+}
+
+.auto-backup-list small {
+  color: var(--muted);
+}
+
+.auto-backup-list .btn {
+  padding: 8px 12px;
+  font-size: 13px;
+}

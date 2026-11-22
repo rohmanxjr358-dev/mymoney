@@ -45,25 +45,39 @@ function signedRupiah(value) {
 
 
 // ===== 1. TOTAL SALDO KESELURUHAN =====
+// Nominal disamarkan jika tombol mata sedang "tutup"
+function maskedMoney(text) {
+  return appData.settings.hideBalance
+    ? '<span class="money-mask" aria-label="Disembunyikan">Rp<i>•</i><i>•</i><i>•</i><i>•</i><i>•</i><i>•</i></span>'
+    : text;
+}
+
 function renderDashHero() {
   const wallet = getWalletBalance();
   const funds = getTotalFunds();
+  const hidden = Boolean(appData.settings.hideBalance);
 
   dashHero.innerHTML = `
     <div class="dash-hero-top">
       <div>
-        <div class="dash-greeting">${greeting()} 👋</div>
+        <div class="dash-greeting">${greeting()}${appData.settings.name ? ', ' + escapeHtml(appData.settings.name) : ''} 👋</div>
         <div class="dash-hero-label">Total saldo keseluruhan</div>
-        <div class="dash-hero-value">${signedRupiah(wallet + funds)}</div>
+        <div class="dash-hero-value-row">
+          <div class="dash-hero-value">${maskedMoney(signedRupiah(wallet + funds))}</div>
+          <button type="button" class="eye-btn ${hidden ? 'closed' : ''}" data-eye
+                  aria-pressed="${hidden}" title="${hidden ? 'Tampilkan saldo' : 'Sembunyikan saldo'}">
+            <span class="material-symbols-rounded">${hidden ? 'visibility_off' : 'visibility'}</span>
+          </button>
+        </div>
       </div>
-      <button type="button" class="btn btn-light" data-dash-go="transaksi">
+      <button type="button" class="btn btn-light" data-nudge="catat">
         <span class="material-symbols-rounded">add</span>
         Catat Transaksi
       </button>
     </div>
     <div class="dash-hero-split">
-      <div><span>Uang pakai</span><strong>${signedRupiah(wallet)}</strong></div>
-      <div><span>Dana tersimpan</span><strong>${formatRupiah(funds)}</strong></div>
+      <div><span>Uang di dompet</span><strong>${maskedMoney(signedRupiah(wallet))}</strong></div>
+      <div><span>Tabungan</span><strong>${maskedMoney(formatRupiah(funds))}</strong></div>
     </div>
   `;
 }
@@ -75,7 +89,7 @@ function renderDashSafe() {
 
   if (!safe.ready) {
     dashSafe.innerHTML = `
-      <h2 class="card-title">Uang Aman sampai Transfer Berikutnya</h2>
+      <h2 class="card-title">Jatah sampai Kiriman Berikutnya</h2>
       <p class="empty-state">
         Catat uang bulanan terlebih dahulu agar aplikasi tahu kapan transfer berikutnya.
       </p>
@@ -91,9 +105,9 @@ function renderDashSafe() {
 
   // Rincian pengurang
   const lines = [
-    { label: 'Uang pakai saat ini', value: safe.wallet, sign: '' }
+    { label: 'Uang di dompet saat ini', value: safe.wallet, sign: '' }
   ];
-  if (safe.wajib.total) lines.push({ label: 'Kebutuhan wajib belum dibayar', value: safe.wajib.total, sign: '−', items: safe.wajib.items });
+  if (safe.wajib.total) lines.push({ label: 'Wajib bayar belum dibayar', value: safe.wajib.total, sign: '−', items: safe.wajib.items });
   if (safe.bills.total) lines.push({ label: 'Tagihan sebelum transfer berikutnya', value: safe.bills.total, sign: '−', items: safe.bills.items });
   if (safe.savings.total) lines.push({ label: 'Rencana disisihkan, belum dipindah', value: safe.savings.total, sign: '−', items: safe.savings.items });
 
@@ -131,7 +145,7 @@ function renderDashSafe() {
 
   dashSafe.innerHTML = `
     <div class="card-header">
-      <h2 class="card-title">Uang Aman sampai Transfer Berikutnya</h2>
+      <h2 class="card-title">Jatah sampai Kiriman Berikutnya</h2>
       <span class="status-badge ${safe.usable < 0 ? 'over' : (safe.projectedEnough ? 'ok' : 'late')}">
         ${safe.usable < 0 ? 'Kurang' : (safe.projectedEnough ? 'Cukup' : 'Perlu hemat')}
       </span>
@@ -139,14 +153,14 @@ function renderDashSafe() {
 
     <div class="safe-main">
       <div class="safe-big">
-        <span>Bisa dipakai</span>
+        <span>Bebas dipakai</span>
         <strong class="${safe.usable < 0 ? 'text-danger' : ''}">${signedRupiah(safe.usable)}</strong>
         <small>sampai ${formatShortDate(safe.nextDate)} · ${Math.max(0, safe.daysLeft)} hari lagi</small>
       </div>
       <div class="safe-big">
-        <span>Batas pengeluaran harian</span>
+        <span>Jatah harian</span>
         <strong>${formatRupiah(safe.dailyLimit)}</strong>
-        <small>Hari ini terpakai ${formatRupiah(safe.spentToday)}</small>
+        <small>Hari ini terpakai ${formatRupiah(safe.spentToday)} · ${safe.limitSource === 'pekan' ? 'dari sisa anggaran pekan ini' : 'dari jatah aman'}</small>
         <div class="budget-bar ${todayClass}"><span style="width:${todayPercent}%"></span></div>
       </div>
     </div>
@@ -154,7 +168,7 @@ function renderDashSafe() {
     <div class="safe-lines">
       ${linesHtml}
       <div class="safe-line total">
-        <span>Bisa dipakai</span>
+        <span>Bebas dipakai</span>
         <strong>${signedRupiah(safe.usable)}</strong>
       </div>
     </div>
@@ -432,6 +446,9 @@ function renderDashRecent() {
 
 // ===== TAMPILKAN SELURUH DASHBOARD =====
 function renderDashboard() {
+  // Tombol mata: samarkan semua nominal di Dashboard
+  document.getElementById('page-dashboard').classList.toggle('money-hidden', Boolean(appData.settings.hideBalance));
+
   renderDashHero();
   renderDashSafe();
   renderDashStats();
@@ -450,6 +467,17 @@ function renderDashboard() {
 
 // ===== MENGHUBUNGKAN TOMBOL =====
 document.getElementById('page-dashboard').addEventListener('click', function (event) {
+  // Tombol mata: buka / tutup saldo
+  if (event.target.closest('[data-eye]')) {
+    appData.settings.hideBalance = !appData.settings.hideBalance;
+    saveData();
+    renderDashboard();
+    const eye = dashHero.querySelector('.eye-btn');
+    if (eye) eye.classList.add('flip');
+    showToast(appData.settings.hideBalance ? 'Saldo disembunyikan 🙈' : 'Saldo ditampilkan 👀');
+    return;
+  }
+
   // Tombol pindah halaman
   const go = event.target.closest('[data-dash-go]');
   if (go) {

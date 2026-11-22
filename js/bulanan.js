@@ -370,7 +370,7 @@ function renderPeriodList() {
         <div class="tx-right">
           <div class="tx-amount masuk">+${formatRupiah(period.amount)}</div>
           <div class="tx-actions">
-            <button type="button" class="icon-btn" data-action="alloc-period" data-id="${period.id}" title="Atur alokasi">
+            <button type="button" class="icon-btn" data-action="alloc-period" data-id="${period.id}" title="Atur rencana">
               <span class="material-symbols-rounded">tune</span>
             </button>
             <button type="button" class="icon-btn" data-action="edit-period" data-id="${period.id}" title="Edit">

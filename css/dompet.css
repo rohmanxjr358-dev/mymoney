@@ -1,0 +1,497 @@
+/* =====================================================
+   DOMPET.CSS — Dompet & Rekening
+   ===================================================== */
+
+/* ===== LENCANA MEREK (bulatan warna + singkatan) ===== */
+.wallet-badge {
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--wc), color-mix(in srgb, var(--wc) 65%, #000));
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #fff;
+  box-shadow: 0 6px 14px -8px var(--wc);
+}
+
+.wallet-badge.emoji {
+  font-size: 20px;
+}
+
+.wallet-badge.small {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  font-size: 9.5px;
+}
+
+.wallet-badge.small.emoji {
+  font-size: 16px;
+}
+
+.wallet-badge.tiny {
+  width: 22px;
+  height: 22px;
+  border-radius: 7px;
+  font-size: 7.5px;
+}
+
+.wallet-badge.tiny.emoji {
+  font-size: 12px;
+}
+
+/* ===== STRIP DI DASHBOARD ===== */
+.wallet-head-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.wallet-row {
+  display: flex;
+  gap: 10px;
+  margin: 12px -20px 0;
+  padding: 4px 20px 6px;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+}
+
+.wallet-row::-webkit-scrollbar {
+  display: none;
+}
+
+.wallet-card {
+  position: relative;
+  display: flex;
+  flex: 0 0 136px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background:
+    radial-gradient(120% 80% at 100% 0%, color-mix(in srgb, var(--wc) 22%, transparent), transparent 60%),
+    var(--surface);
+  font: inherit;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  scroll-snap-align: start;
+  animation: riseIn 0.4s ease both;
+  animation-delay: calc(var(--i, 0) * 0.06s);
+  transition: transform 0.15s, border-color 0.15s;
+}
+
+.wallet-card:hover {
+  border-color: var(--wc, var(--primary));
+}
+
+.wallet-card:active {
+  transform: scale(0.97);
+}
+
+.wallet-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.wallet-star {
+  font-size: 14px;
+  color: #f59e0b;
+}
+
+.wallet-card-name {
+  max-width: 100%;
+  overflow: hidden;
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.wallet-card-balance {
+  font-size: 15px;
+  white-space: nowrap;
+}
+
+.wallet-card.add {
+  flex-basis: 84px;
+  align-items: center;
+  justify-content: center;
+  border-style: dashed;
+  background: none;
+  color: var(--primary);
+}
+
+.wallet-card.add .material-symbols-rounded {
+  font-size: 26px;
+}
+
+/* ===== PILIHAN DOMPET (chip) ===== */
+.wallet-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.wallet-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px 5px 5px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, transform 0.15s;
+}
+
+.wallet-chip.active {
+  border-color: var(--wc);
+  background: color-mix(in srgb, var(--wc) 14%, var(--surface));
+  transform: scale(1.03);
+}
+
+/* ===== JENDELA ===== */
+.wallet-modal-head {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.wallet-total {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 4px 0 14px;
+  padding: 14px;
+  border-radius: 14px;
+  background: var(--primary-soft);
+}
+
+.wallet-total span {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.wallet-total strong {
+  font-size: 22px;
+}
+
+.wallet-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.wallet-list-row,
+.wallet-history-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+  font: inherit;
+  color: var(--text);
+  text-align: left;
+}
+
+.wallet-list-row {
+  cursor: pointer;
+}
+
+.wallet-list-row:hover {
+  border-color: var(--primary);
+}
+
+.wallet-list-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.wallet-list-info strong {
+  overflow: hidden;
+  font-size: 14px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.wallet-list-info small {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.wallet-list-row > strong,
+.wallet-history-row > strong {
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.wallet-tag {
+  display: inline-block;
+  margin-left: 4px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--warning-soft);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--warning);
+}
+
+.wallet-tag.income {
+  background: var(--success-soft);
+  color: var(--success);
+}
+
+.wallet-hero {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 18px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, var(--wc), color-mix(in srgb, var(--wc) 55%, #000));
+  color: #fff;
+}
+
+.wallet-hero span,
+.wallet-hero small {
+  font-size: 12px;
+  opacity: 0.85;
+}
+
+.wallet-hero strong {
+  font-size: 26px;
+}
+
+.wallet-actions {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.wallet-action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 4px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg);
+  font: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.wallet-action .material-symbols-rounded {
+  font-size: 20px;
+  color: var(--primary);
+}
+
+.wallet-history-title {
+  margin: 18px 0 8px;
+}
+
+.wallet-history {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.wallet-history-row {
+  padding: 8px 10px;
+  border-radius: 12px;
+}
+
+.wh-icon {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  font-size: 18px;
+}
+
+.wh-icon.in  { background: var(--success-soft); color: var(--success); }
+.wh-icon.out { background: var(--danger-soft);  color: var(--danger); }
+
+/* Pilih merek */
+.brand-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+  margin: 6px 0 14px;
+}
+
+.brand-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 2px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  font: inherit;
+  font-size: 10.5px;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.brand-option span:last-child {
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.brand-option.active {
+  border-color: var(--wc);
+  background: color-mix(in srgb, var(--wc) 12%, var(--surface));
+  font-weight: 700;
+}
+
+/* Pindah uang */
+.transfer-field {
+  margin-top: 12px;
+}
+
+.transfer-arrow {
+  display: grid;
+  place-items: center;
+  margin: 6px 0 -4px;
+  color: var(--primary);
+  animation: arrowBob 1.6s ease-in-out infinite;
+}
+
+@keyframes arrowBob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(4px); }
+}
+
+#transfer-form .form-grid {
+  margin-top: 14px;
+}
+
+/* Sesuaikan saldo */
+.adjust-compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.adjust-compare div {
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  border-radius: 12px;
+  background: var(--bg);
+}
+
+.adjust-compare span {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.adjust-compare strong {
+  font-size: 16px;
+}
+
+/* Tombol mata: saldo dompet ikut disembunyikan */
+#page-dashboard.money-hidden .wallet-card-balance {
+  letter-spacing: 0.02em;
+}
+
+/* Layar sempit: tombol di judul cukup ikon */
+@media (max-width: 400px) {
+  .wallet-head-actions .wlabel {
+    display: none;
+  }
+
+  .wallet-head-actions .material-symbols-rounded {
+    font-size: 22px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wallet-card,
+  .transfer-arrow {
+    animation: none;
+  }
+}
+
+/* ===== LOKASI TABUNGAN ===== */
+.wallet-card-saved {
+  font-size: 10.5px;
+  color: var(--muted);
+}
+
+.fund-loc-title {
+  margin-top: 20px;
+}
+
+.fund-loc-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.fund-loc-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.fund-loc-row span {
+  display: flex;
+  flex-direction: column;
+}
+
+.fund-loc-row small {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+.fund-loc-row select {
+  min-width: 0;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  font: inherit;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.wh-icon.kept { background: var(--primary-soft); color: var(--primary); }
+.wh-kept { color: var(--muted); }

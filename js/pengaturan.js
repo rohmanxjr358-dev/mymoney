@@ -3,7 +3,7 @@
 //                 penyimpanan, hapus semua data, tentang
 // =====================================================
 
-const APP_VERSION = '1.0';
+const APP_VERSION = '2.5';
 
 // Nilai bawaan untuk data lama
 if (appData.settings.backupReminderDays === undefined) {
@@ -46,6 +46,10 @@ function renderSettingsGeneral() {
 
     <form id="pref-form" novalidate>
       <div class="form-grid">
+        <div class="field field-full">
+          <label for="pref-name">Nama panggilan</label>
+          <input type="text" id="pref-name" maxlength="20" placeholder="Untuk sapaan di Dashboard" value="${escapeHtml(appData.settings.name || '')}">
+        </div>
         <div class="field">
           <label for="pref-transfer-day">Tanggal kesepakatan transfer</label>
           <input type="number" id="pref-transfer-day" inputmode="numeric" min="1" max="31" value="${day}" placeholder="Contoh: 5">
@@ -75,6 +79,7 @@ function savePreferences(event) {
   }
 
   appData.settings.expectedTransferDay = dayText ? day : null;
+  appData.settings.name = document.getElementById('pref-name').value.trim();
   appData.settings.backupReminderDays = Number(document.getElementById('pref-backup').value);
   saveData();
 
@@ -217,6 +222,9 @@ function renderSettingsAbout() {
         <div class="about-meta">${location.origin + location.pathname.replace('index.html', '')}</div>
       </div>
     </div>
+    <button type="button" class="btn btn-secondary about-whatsnew" data-whatsnew-open>
+      <span class="material-symbols-rounded">celebration</span> Apa yang baru di versi ${APP_VERSION}
+    </button>
   `;
 }
 
