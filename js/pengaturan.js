@@ -28,8 +28,22 @@ function renderSettingsGeneral() {
       return `<option value="${pair[0]}" ${pair[0] === remind ? 'selected' : ''}>${pair[1]}</option>`;
     }).join('');
 
+  // Pilihan tema: [nilai, ikon, label]
+  const themeChoices = [['light', 'light_mode', 'Terang'], ['dark', 'dark_mode', 'Gelap'], ['auto', 'contrast', 'Ikuti HP']]
+    .map(function (c) {
+      return `
+        <button type="button" class="segmented-btn ${getThemeSetting() === c[0] ? 'active' : ''}" data-theme-choice="${c[0]}">
+          <span class="material-symbols-rounded">${c[1]}</span> ${c[2]}
+        </button>
+      `;
+    }).join('');
+
   settingsGeneral.innerHTML = `
     <h2 class="card-title">Preferensi</h2>
+
+    <div class="theme-label">Tema tampilan</div>
+    <div class="segmented theme-picker">${themeChoices}</div>
+
     <form id="pref-form" novalidate>
       <div class="form-grid">
         <div class="field">
@@ -218,6 +232,16 @@ function renderPengaturan() {
 
 // ===== MENGHUBUNGKAN TOMBOL =====
 settingsGeneral.addEventListener('submit', savePreferences);
+
+// Ganti tema langsung saat tombol diklik (tanpa perlu tombol Simpan)
+settingsGeneral.addEventListener('click', function (event) {
+  const choice = event.target.closest('[data-theme-choice]');
+  if (!choice) return;
+
+  setTheme(choice.dataset.themeChoice);
+  renderSettingsGeneral();
+  showToast('Tema: ' + { light: 'Terang', dark: 'Gelap', auto: 'Ikuti HP' }[choice.dataset.themeChoice]);
+});
 
 settingsDanger.addEventListener('click', function (event) {
   if (event.target.closest('#btn-delete-all')) deleteAllData();

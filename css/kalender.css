@@ -1,0 +1,414 @@
+/* =====================================================
+   KALENDER.CSS — Kalender pengeluaran
+   ===================================================== */
+
+/* Skala warna satu rona (biru): terang = sedikit, pekat = banyak */
+:root {
+  --heat-0: var(--bg);
+  --heat-1: #dbeafe;
+  --heat-2: #93c5fd;
+  --heat-3: #3b82f6;
+  --heat-4: #1e3a8a;
+  --heat-text-strong: #ffffff;
+}
+
+/* Tema gelap: makin besar makin terang (menonjol di latar gelap) */
+html[data-theme="dark"] {
+  --heat-0: #0d1526;
+  --heat-1: #172a4d;
+  --heat-2: #1e40af;
+  --heat-3: #3b82f6;
+  --heat-4: #93c5fd;
+  --heat-text-strong: #0b1120;
+}
+
+/* ===== KEPALA: NAMA BULAN ===== */
+.cal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.cal-title {
+  font-size: 17px;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+/* ===== ANGKA RINGKAS ===== */
+.cal-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.cal-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px;
+  border-radius: 12px;
+  background: var(--bg);
+}
+
+.cal-stat span {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.cal-stat strong {
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.cal-stat.zero strong {
+  color: var(--success);
+}
+
+.cal-stat.streak.hot {
+  background: linear-gradient(135deg, rgba(251, 146, 60, 0.18), rgba(244, 63, 94, 0.14));
+}
+
+.cal-stat.streak.hot strong {
+  color: #ea580c;
+}
+
+html[data-theme="dark"] .cal-stat.streak.hot strong {
+  color: #fdba74;
+}
+
+/* ===== KOTAK-KOTAK TANGGAL ===== */
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 6px;
+  margin-top: 16px;
+}
+
+.cal-weekday {
+  padding-bottom: 2px;
+  font-size: 11px;
+  font-weight: 600;
+  text-align: center;
+  color: var(--muted);
+}
+
+.cal-weekday.weekend {
+  color: var(--primary);
+}
+
+.cal-cell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  aspect-ratio: 1 / 1.05;
+  min-width: 0;
+  padding: 2px;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  background: var(--heat-0);
+  font: inherit;
+  color: var(--text);
+  cursor: pointer;
+  transition: transform 0.15s, border-color 0.15s;
+}
+
+.cal-cell.blank {
+  background: none;
+  cursor: default;
+}
+
+.cal-cell:not(.blank):hover {
+  transform: translateY(-2px);
+}
+
+.cal-cell.heat-1 { background: var(--heat-1); }
+.cal-cell.heat-2 { background: var(--heat-2); }
+.cal-cell.heat-3 { background: var(--heat-3); color: var(--heat-text-strong); }
+.cal-cell.heat-4 { background: var(--heat-4); color: var(--heat-text-strong); }
+
+.cal-cell.future {
+  opacity: 0.45;
+}
+
+/* Hari ini: cincin biru berdenyut */
+.cal-cell.today {
+  border-color: var(--primary);
+}
+
+.cal-cell.today::after {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  border: 2px solid var(--primary);
+  border-radius: 15px;
+  opacity: 0;
+  animation: todayRing 2.4s ease-out infinite;
+  pointer-events: none;
+}
+
+@keyframes todayRing {
+  0%   { opacity: 0.6; transform: scale(0.92); }
+  100% { opacity: 0;   transform: scale(1.12); }
+}
+
+.cal-cell.selected {
+  border-color: var(--text);
+  transform: scale(1.06);
+  z-index: 1;
+}
+
+.cal-num {
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.cal-amt {
+  max-width: 100%;
+  overflow: hidden;
+  font-size: 9.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  opacity: 0.85;
+}
+
+.cal-dots {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  display: flex;
+  gap: 2px;
+}
+
+.dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.dot.in      { background: #10b981; box-shadow: 0 0 0 1.5px var(--surface); }
+.dot.bill    { background: #f59e0b; box-shadow: 0 0 0 1.5px var(--surface); }
+.dot.bill.paid { background: var(--muted); }
+
+/* Animasi: kotak muncul berurutan / bergeser saat ganti bulan */
+.cal-grid.enter .cal-cell:not(.blank) {
+  animation: calPop 0.35s ease both;
+  animation-delay: calc(var(--d) * 12ms);
+}
+
+.cal-grid.slide-left  { animation: calSlideLeft 0.35s ease both; }
+.cal-grid.slide-right { animation: calSlideRight 0.35s ease both; }
+
+@keyframes calPop {
+  from { opacity: 0; transform: scale(0.6); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes calSlideLeft {
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes calSlideRight {
+  from { opacity: 0; transform: translateX(-40px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ===== KETERANGAN WARNA ===== */
+.cal-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  margin-top: 14px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.cal-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.cal-scale i {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+}
+
+.cal-scale .heat-0 { background: var(--heat-0); border: 1px solid var(--border); }
+.cal-scale .heat-1 { background: var(--heat-1); }
+.cal-scale .heat-2 { background: var(--heat-2); }
+.cal-scale .heat-3 { background: var(--heat-3); }
+.cal-scale .heat-4 { background: var(--heat-4); }
+
+.cal-today {
+  margin-top: 10px;
+}
+
+/* ===== RINCIAN HARI ===== */
+.cal-day-total {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--danger);
+  white-space: nowrap;
+}
+
+.cal-bill {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--warning-soft);
+  font-size: 13px;
+}
+
+.cal-bill .material-symbols-rounded {
+  font-size: 18px;
+  color: var(--warning);
+}
+
+/* ===== POLA HARI ===== */
+.pattern-chart {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 8px;
+  height: 150px;
+  margin-top: 16px;
+}
+
+.pattern-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.pattern-value {
+  height: 14px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.pattern-track {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  max-width: 28px;
+  display: flex;
+  align-items: flex-end;
+}
+
+.pattern-track span {
+  display: block;
+  width: 100%;
+  border-radius: 4px 4px 0 0;
+  background: var(--heat-2);
+  transform-origin: bottom;
+  animation: barRise 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation-delay: calc(var(--i) * 60ms);
+}
+
+.pattern-col.top .pattern-track span {
+  background: linear-gradient(180deg, #60a5fa, var(--primary));
+}
+
+html[data-theme="dark"] .pattern-col.top .pattern-track span {
+  background: linear-gradient(180deg, #93c5fd, #3b82f6);
+}
+
+.pattern-label {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.pattern-col.top .pattern-label {
+  font-weight: 700;
+  color: var(--text);
+}
+
+@keyframes barRise {
+  from { transform: scaleY(0); }
+  to   { transform: scaleY(1); }
+}
+
+.pattern-insight {
+  margin-top: 14px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* ===== HP ===== */
+@media (max-width: 768px) {
+  /* Tiga tab (Catat / Riwayat / Kalender) dibagi rata */
+  #tx-tabs .tab {
+    flex: 1;
+    justify-content: center;
+    gap: 4px;
+    padding: 10px 4px;
+    font-size: 13px;
+  }
+
+  #tx-tabs .tab .material-symbols-rounded {
+    font-size: 18px;
+  }
+
+  .more-item {
+    font-size: 11px;
+  }
+
+  .cal-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .cal-grid {
+    gap: 4px;
+  }
+
+  .cal-cell {
+    border-radius: 9px;
+  }
+
+  .cal-num {
+    font-size: 12px;
+  }
+
+  .cal-amt {
+    font-size: 8.5px;
+  }
+
+  .cal-dots {
+    top: 3px;
+    right: 3px;
+  }
+
+  .dot {
+    width: 5px;
+    height: 5px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cal-cell.today::after,
+  .cal-grid.enter .cal-cell,
+  .cal-grid.slide-left,
+  .cal-grid.slide-right,
+  .pattern-track span {
+    animation: none;
+  }
+}

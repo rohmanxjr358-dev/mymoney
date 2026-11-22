@@ -1,0 +1,620 @@
+/* =====================================================
+   UTANG.CSS — Utang, piutang & patungan
+   ===================================================== */
+
+/* ===== KARTU ATAS (gradasi bergerak) ===== */
+.debt-hero {
+  position: relative;
+  overflow: hidden;
+  padding: 20px;
+  border-radius: var(--radius);
+  background: linear-gradient(125deg, #0f766e, #1d4ed8, #4338ca, #0e7490, #0f766e);
+  background-size: 300% 300%;
+  animation: gradientShift 16s ease infinite;
+  color: #fff;
+}
+
+/* Pola lingkaran samar sebagai hiasan */
+.debt-hero::before {
+  content: '';
+  position: absolute;
+  top: -60px;
+  right: -40px;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.16), transparent 65%);
+  pointer-events: none;
+}
+
+.debt-hero-grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.debt-side {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.debt-side.out {
+  text-align: right;
+  align-items: flex-end;
+}
+
+.debt-side span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  opacity: 0.85;
+}
+
+.debt-side span .material-symbols-rounded {
+  font-size: 16px;
+}
+
+.debt-side strong {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* Tarik tambang: kiri = uangku di teman, kanan = utangku */
+.debt-tug {
+  position: relative;
+  height: 10px;
+  margin: 14px 0 10px;
+  border-radius: 999px;
+  background: rgba(251, 191, 36, 0.85);
+}
+
+.debt-tug.empty {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.debt-tug.empty .tug-in,
+.debt-tug.empty .tug-knot {
+  display: none;
+}
+
+.tug-in {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: 999px 0 0 999px;
+  background: #34d399;
+  transition: width 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.tug-knot {
+  position: absolute;
+  top: 50%;
+  width: 18px;
+  height: 18px;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background: #1e3a8a;
+  transform: translate(-50%, -50%);
+  transition: left 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+  animation: knotWiggle 3s ease-in-out infinite;
+}
+
+@keyframes knotWiggle {
+  0%, 100% { transform: translate(-50%, -50%); }
+  50%      { transform: translate(-40%, -50%); }
+}
+
+.debt-net {
+  position: relative;
+  font-size: 13px;
+  opacity: 0.95;
+}
+
+/* ===== TOMBOL AKSI ===== */
+.debt-actions {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.debt-action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 4px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.12);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+  transition: background 0.15s, transform 0.15s;
+}
+
+.debt-action:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.debt-action:active {
+  transform: scale(0.95);
+}
+
+.debt-action .material-symbols-rounded {
+  font-size: 22px;
+}
+
+#debt-people {
+  margin-top: 16px;
+}
+
+/* ===== AVATAR ===== */
+.debt-avatar {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--tone), var(--tone-2));
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  box-shadow: 0 4px 12px -6px var(--tone);
+}
+
+.debt-avatar.small {
+  width: 32px;
+  height: 32px;
+  font-size: 12px;
+}
+
+/* ===== DAFTAR ORANG ===== */
+.debt-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.debt-person {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+  font: inherit;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  animation: riseIn 0.4s ease both;
+  animation-delay: calc(var(--i, 0) * 0.05s);
+  transition: border-color 0.15s, transform 0.15s;
+}
+
+.debt-person:hover {
+  border-color: var(--primary);
+}
+
+.debt-person:active {
+  transform: scale(0.99);
+}
+
+.debt-person-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.debt-person-info strong {
+  overflow: hidden;
+  font-size: 15px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.debt-person-info small {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.debt-person-info .status-badge {
+  margin-left: 4px;
+  padding: 1px 7px;
+  font-size: 10px;
+}
+
+.debt-person-amount {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.debt-person-amount strong {
+  font-size: 15px;
+  white-space: nowrap;
+}
+
+.debt-person-amount small {
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.debt-person-amount.in strong  { color: var(--success); }
+.debt-person-amount.out strong { color: var(--warning); }
+
+.debt-chevron {
+  color: var(--muted);
+  font-size: 20px;
+}
+
+.debt-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 22px 8px 6px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.debt-empty > span {
+  font-size: 40px;
+  animation: softPulse 2.6s ease-in-out infinite;
+}
+
+/* ===== SUDAH LUNAS ===== */
+#debt-settled {
+  margin-top: 16px;
+}
+
+.debt-settled summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  list-style: none;
+}
+
+.debt-settled summary::-webkit-details-marker {
+  display: none;
+}
+
+.debt-settled summary .material-symbols-rounded {
+  color: var(--success);
+}
+
+.debt-settled-list {
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+}
+
+.debt-settled-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-top: 1px solid var(--border);
+  opacity: 0.85;
+}
+
+.debt-settled-amount {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--muted);
+  text-decoration: line-through;
+  white-space: nowrap;
+}
+
+/* ===== JENDELA ORANG ===== */
+.debt-modal-head {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.debt-modal-head .debt-avatar {
+  width: 34px;
+  height: 34px;
+  font-size: 14px;
+}
+
+.debt-modal-net {
+  margin: 4px 0 14px;
+  font-size: 14px;
+}
+
+.debt-items {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.debt-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--success);
+  border-radius: 12px;
+}
+
+.debt-item.utang {
+  border-left-color: var(--warning);
+}
+
+.debt-item-top {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.debt-item-tools {
+  display: flex;
+  margin-left: auto;
+}
+
+.debt-dir {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.debt-dir.piutang { background: var(--success-soft); color: var(--success); }
+.debt-dir.utang   { background: var(--warning-soft); color: var(--warning); }
+
+.debt-item-note {
+  font-size: 15px;
+}
+
+.debt-item-meta {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.debt-item-amounts {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+  font-size: 13px;
+}
+
+.debt-item-amounts span:last-child {
+  color: var(--muted);
+}
+
+.debt-bar span {
+  background: linear-gradient(90deg, var(--success), #2dd4bf);
+}
+
+.debt-item.utang .debt-bar span {
+  background: linear-gradient(90deg, var(--warning), #fb923c);
+}
+
+.debt-payments {
+  margin: 4px 0 0 16px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.debt-pay-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 10px;
+  border-radius: 10px;
+  background: var(--bg);
+}
+
+.debt-pay-form input[type="date"] {
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  font: inherit;
+  font-size: 16px;
+  color: var(--text);
+}
+
+.debt-item-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.debt-item-buttons .btn {
+  padding: 9px 10px;
+  font-size: 13px;
+}
+
+.debt-dir-picker {
+  margin-bottom: 14px;
+}
+
+.debt-dir-picker .segmented-btn.active[data-dir="piutang"] { color: var(--success); }
+.debt-dir-picker .segmented-btn.active[data-dir="utang"]   { color: var(--warning); }
+
+/* ===== PATUNGAN ===== */
+.split-suggest {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.split-suggest:empty {
+  display: none;
+}
+
+.split-chip {
+  padding: 4px 10px;
+  border: 1px dashed var(--border);
+  border-radius: 999px;
+  background: none;
+  font: inherit;
+  font-size: 12px;
+  color: var(--primary);
+  cursor: pointer;
+}
+
+.split-chip.used {
+  border-style: solid;
+  background: var(--primary-soft);
+}
+
+.split-preview {
+  margin-top: 14px;
+  padding: 14px;
+  border-radius: 12px;
+  background: var(--primary-soft);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.split-hint {
+  color: var(--muted);
+}
+
+.split-people {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.split-person {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  animation: riseIn 0.3s ease both;
+}
+
+.split-person.me .debt-avatar {
+  font-size: 10px;
+}
+
+.split-person small {
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* ===== RINGKASAN KECIL DI DASHBOARD ===== */
+#dash-debt:empty {
+  display: none;
+}
+
+#dash-debt {
+  margin-top: 16px;
+}
+
+.dash-debt {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  font: inherit;
+  font-size: 14px;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+}
+
+.dash-debt-icon {
+  font-size: 20px;
+}
+
+.dash-debt-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.dash-debt-text i {
+  margin: 0 6px;
+  font-style: normal;
+  color: var(--muted);
+}
+
+/* ===== KONFETI ===== */
+.confetti-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.confetti-layer i {
+  position: absolute;
+  top: -12px;
+  left: var(--x);
+  width: 8px;
+  height: 12px;
+  border-radius: 2px;
+  animation: confettiFall var(--dur) cubic-bezier(0.25, 0.6, 0.4, 1) var(--delay) forwards;
+}
+
+@keyframes confettiFall {
+  to {
+    transform: translate(var(--drift), 105vh) rotate(var(--spin));
+    opacity: 0.2;
+  }
+}
+
+/* ===== HP ===== */
+@media (max-width: 768px) {
+  .debt-side strong {
+    font-size: 19px;
+  }
+
+  .debt-pay-form {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .debt-pay-form .btn {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .debt-hero,
+  .tug-knot,
+  .debt-person,
+  .debt-empty > span,
+  .split-person {
+    animation: none;
+  }
+}
+
+@media print {
+  .debt-hero {
+    animation: none;
+  }
+}

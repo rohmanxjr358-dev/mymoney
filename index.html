@@ -16,6 +16,21 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="MyMoney">
 
+  <!-- Pasang tema secepatnya agar layar tidak "berkedip" putih sebelum gelap -->
+  <script>
+    (function () {
+      var theme = 'dark';
+      try {
+        var settings = (JSON.parse(localStorage.getItem('mymoney-data')) || {}).settings || {};
+        theme = settings.theme || 'dark';
+      } catch (e) {}
+      if (theme === 'auto') {
+        theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+
   <!-- Font dan ikon dari Google -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0">
@@ -38,9 +53,16 @@
   <link rel="stylesheet" href="css/laporan.css">
   <link rel="stylesheet" href="css/analisis.css">
   <link rel="stylesheet" href="css/pengaturan.css">
+  <link rel="stylesheet" href="css/cepat.css">
+  <link rel="stylesheet" href="css/utang.css">
+  <link rel="stylesheet" href="css/kalender.css">
+  <link rel="stylesheet" href="css/rekap.css">
 
   <!-- Animasi warna & efek halus (hapus baris ini untuk mematikan semua animasi) -->
   <link rel="stylesheet" href="css/animasi.css">
+
+  <!-- Tema gelap "Midnight Blue" (dipilih di Pengaturan) -->
+  <link rel="stylesheet" href="css/tema.css">
 </head>
 <body>
   <div class="app">
@@ -80,6 +102,10 @@
           <span class="material-symbols-rounded">event</span>
           <span class="nav-label">Tagihan</span>
         </button>
+        <button class="nav-item desktop-only" data-page="utang">
+          <span class="material-symbols-rounded">handshake</span>
+          <span class="nav-label">Utang &amp; Patungan</span>
+        </button>
         <button class="nav-item desktop-only" data-page="laporan">
           <span class="material-symbols-rounded">bar_chart</span>
           <span class="nav-label">Laporan</span>
@@ -113,10 +139,13 @@
       <!-- ===== HALAMAN DASHBOARD (diisi oleh dashboard.js) ===== -->
       <section class="page" id="page-dashboard">
         <div class="dash-hero" id="dash-hero"></div>
+        <div id="dash-recap"></div>
+        <div class="card quick-card" id="dash-quick"></div>
         <div class="dash-stats" id="dash-stats"></div>
         <div class="card" id="dash-safe"></div>
         <div class="card" id="dash-analysis"></div>
         <div class="dash-funds" id="dash-funds"></div>
+        <div id="dash-debt"></div>
         <div class="dash-grid">
           <div class="card" id="dash-categories"></div>
           <div class="card" id="dash-chart"></div>
@@ -137,10 +166,17 @@
             <span class="material-symbols-rounded">history</span>
             Riwayat
           </button>
+          <button type="button" class="tab" data-tab="kalender">
+            <span class="material-symbols-rounded">calendar_month</span>
+            Kalender
+          </button>
         </div>
 
         <!-- ===== TAB CATAT ===== -->
         <div class="tab-panel active" id="tab-catat">
+          <!-- Catat Kilat (diisi oleh cepat.js) -->
+          <div class="card quick-card" id="tx-quick"></div>
+
           <div class="card">
             <h2 class="card-title" id="form-title">Catat Transaksi</h2>
 
@@ -297,6 +333,20 @@
             </button>
           </div>
         </div>
+
+        <!-- ===== TAB KALENDER (diisi oleh kalender.js) ===== -->
+        <div class="tab-panel" id="tab-kalender">
+          <div class="card" id="cal-card"></div>
+          <div class="card" id="cal-day"></div>
+          <div class="card" id="cal-pattern"></div>
+        </div>
+      </section>
+
+      <!-- ===== HALAMAN UTANG & PATUNGAN (diisi oleh utang.js) ===== -->
+      <section class="page" id="page-utang">
+        <div class="debt-hero" id="debt-hero"></div>
+        <div class="card" id="debt-people"></div>
+        <div class="card" id="debt-settled" hidden></div>
       </section>
 
       <!-- ===== HALAMAN ANGGARAN MINGGUAN (diisi oleh anggaran.js) ===== -->
@@ -539,6 +589,10 @@
           <span class="material-symbols-rounded">event</span>
           <span>Tagihan</span>
         </button>
+        <button class="more-item" data-page="utang">
+          <span class="material-symbols-rounded">handshake</span>
+          <span>Utang</span>
+        </button>
         <button class="more-item" data-page="laporan">
           <span class="material-symbols-rounded">bar_chart</span>
           <span>Laporan</span>
@@ -579,6 +633,34 @@
     </div>
   </div>
 
+  <!-- ===== JENDELA ATUR CATAT KILAT ===== -->
+  <div class="modal" id="quick-modal">
+    <div class="modal-backdrop" data-quick-close></div>
+    <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="quick-modal-title">
+      <div class="modal-header">
+        <h3 class="modal-title" id="quick-modal-title">⚡ Atur Catat Kilat</h3>
+        <button type="button" class="icon-btn" data-quick-close title="Tutup">
+          <span class="material-symbols-rounded">close</span>
+        </button>
+      </div>
+      <div id="quick-modal-body"></div>
+    </div>
+  </div>
+
+  <!-- ===== JENDELA UTANG & PATUNGAN ===== -->
+  <div class="modal" id="debt-modal">
+    <div class="modal-backdrop" data-debt-close></div>
+    <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="debt-modal-title">
+      <div class="modal-header">
+        <h3 class="modal-title" id="debt-modal-title">Utang</h3>
+        <button type="button" class="icon-btn" data-debt-close title="Tutup">
+          <span class="material-symbols-rounded">close</span>
+        </button>
+      </div>
+      <div id="debt-modal-body"></div>
+    </div>
+  </div>
+
   <!-- ===== JENDELA DETAIL TRANSAKSI ===== -->
   <div class="modal" id="detail-modal">
     <div class="modal-backdrop" data-close></div>
@@ -610,6 +692,7 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js"></script>
 
   <script src="js/storage.js"></script>
+  <script src="js/tema.js"></script>
   <script src="js/ui.js"></script>
   <script src="js/app.js"></script>
   <script src="js/backup.js"></script>
@@ -626,6 +709,10 @@
   <script src="js/dashboard.js"></script>
   <script src="js/laporan.js"></script>
   <script src="js/analisis.js"></script>
+  <script src="js/cepat.js"></script>
+  <script src="js/utang.js"></script>
+  <script src="js/kalender.js"></script>
+  <script src="js/rekap.js"></script>
   <script src="js/pwa.js"></script>
   <script src="js/pengaturan.js"></script>
 </body>

@@ -6,12 +6,13 @@ const pageTitles = {
   bulanan: 'Uang Bulanan',
   tabungan: 'Tabungan',
   tagihan: 'Tagihan',
+  utang: 'Utang & Patungan',
   laporan: 'Laporan',
   pengaturan: 'Pengaturan'
 };
 
 // Halaman yang ada di dalam menu "Lainnya" (khusus HP)
-const morePages = ['bulanan', 'tagihan', 'laporan', 'pengaturan'];
+const morePages = ['bulanan', 'tagihan', 'utang', 'laporan', 'pengaturan'];
 
 const moreButton = document.getElementById('more-button');
 const moreSheet = document.getElementById('more-sheet');

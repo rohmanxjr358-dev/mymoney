@@ -391,14 +391,14 @@ function renderDashChart() {
       scales: {
         x: {
           grid: { display: false },
-          ticks: { color: '#6b7280', font: { family: 'Plus Jakarta Sans', size: 11 } }
+          ticks: { color: chartTheme().tick, font: { family: 'Plus Jakarta Sans', size: 11 } }
         },
         y: {
           beginAtZero: true,
           border: { display: false },
-          grid: { color: '#eef0f3' },
+          grid: { color: chartTheme().grid },
           ticks: {
-            color: '#6b7280',
+            color: chartTheme().tick,
             font: { family: 'Plus Jakarta Sans', size: 11 },
             maxTicksLimit: 5,
             callback: function (value) { return 'Rp' + compact.format(value); }
@@ -442,6 +442,9 @@ function renderDashboard() {
 
   // Kartu analisis (dibuat di analisis.js)
   if (typeof renderDashAnalysis === 'function') renderDashAnalysis();
+
+  // Catat Kilat, utang, dan rekap (dibuat di cepat.js, utang.js, rekap.js)
+  if (typeof renderDashExtras === 'function') renderDashExtras();
 }
 
 
@@ -459,6 +462,7 @@ document.getElementById('page-dashboard').addEventListener('click', function (ev
       if (target === 'transaksi') switchTransactionTab('catat');
       if (target === 'tabungan') renderTabungan();
       if (target === 'bulanan') renderBulanan();
+      if (target === 'utang') renderUtang();
     }
     return;
   }

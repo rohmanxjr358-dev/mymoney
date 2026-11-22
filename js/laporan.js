@@ -302,14 +302,14 @@ function chartOptions(stacked) {
       x: {
         stacked: !!stacked,
         grid: { display: false },
-        ticks: { color: '#6b7280', font: { family: 'Plus Jakarta Sans', size: 11 }, maxRotation: 0, autoSkip: true }
+        ticks: { color: chartTheme().tick, font: { family: 'Plus Jakarta Sans', size: 11 }, maxRotation: 0, autoSkip: true }
       },
       y: {
         beginAtZero: true,
         border: { display: false },
-        grid: { color: '#eef0f3' },
+        grid: { color: chartTheme().grid },
         ticks: {
-          color: '#6b7280',
+          color: chartTheme().tick,
           font: { family: 'Plus Jakarta Sans', size: 11 },
           maxTicksLimit: 5,
           callback: function (v) { return 'Rp' + compactNumber.format(v); }
@@ -453,7 +453,7 @@ function renderReportCompare(range) {
         label: 'Pengeluaran',
         data: values,
         // Bulan terakhir ditonjolkan, bulan lainnya lebih pudar
-        backgroundColor: values.map(function (v, i) { return i === values.length - 1 ? '#dc2626' : '#f3a5a5'; }),
+        backgroundColor: values.map(function (v, i) { return i === values.length - 1 ? '#dc2626' : chartTheme().mutedRed; }),
         borderRadius: 4,
         maxBarThickness: 28
       }]

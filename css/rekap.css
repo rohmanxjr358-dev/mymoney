@@ -1,0 +1,546 @@
+/* =====================================================
+   REKAP.CSS — Rekap bulanan bergaya story
+   ===================================================== */
+
+/* ===== KARTU DI DASHBOARD ===== */
+#dash-recap {
+  margin-top: 16px;
+}
+
+#dash-recap:empty {
+  display: none;
+}
+
+.recap-banner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 16px;
+  overflow: hidden;
+  border: none;
+  border-radius: var(--radius);
+  background: linear-gradient(120deg, #7c3aed, #db2777, #f59e0b, #7c3aed);
+  background-size: 300% 300%;
+  animation: gradientShift 8s ease infinite;
+  font: inherit;
+  color: #fff;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: 0 12px 28px -14px rgba(219, 39, 119, 0.8);
+}
+
+.recap-banner::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.25) 45%, transparent 60%);
+  transform: translateX(-120%);
+  animation: shine 4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.recap-banner-gift {
+  font-size: 28px;
+  animation: giftShake 2.4s ease-in-out infinite;
+}
+
+@keyframes giftShake {
+  0%, 70%, 100% { transform: none; }
+  75% { transform: rotate(-12deg); }
+  80% { transform: rotate(10deg); }
+  85% { transform: rotate(-8deg); }
+  90% { transform: rotate(5deg); }
+}
+
+.recap-banner-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.recap-banner-text strong {
+  font-size: 15px;
+}
+
+.recap-banner-text small {
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.recap-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.recap-pill {
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color 0.15s, transform 0.15s;
+}
+
+.recap-pill:hover {
+  border-color: #a78bfa;
+  transform: translateY(-1px);
+}
+
+/* ===== LAYAR STORY ===== */
+body.recap-open {
+  overflow: hidden;
+}
+
+.recap {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(2, 6, 23, 0.85);
+}
+
+.recap.open {
+  display: flex;
+  animation: recapFade 0.25s ease;
+}
+
+@keyframes recapFade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.recap-stage {
+  position: relative;
+  width: min(420px, 100vw);
+  height: min(760px, 100vh);
+  overflow: hidden;
+  border-radius: 24px;
+  color: #fff;
+  background-size: 300% 300%;
+  animation: gradientShift 10s ease infinite;
+  transition: background 0.5s;
+}
+
+/* Gelembung cahaya yang melayang */
+.recap-stage::before,
+.recap-stage::after {
+  content: '';
+  position: absolute;
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  filter: blur(40px);
+  opacity: 0.45;
+  pointer-events: none;
+  animation: blobFloat 12s ease-in-out infinite;
+}
+
+.recap-stage::before {
+  top: -80px;
+  left: -80px;
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.recap-stage::after {
+  right: -100px;
+  bottom: -60px;
+  background: rgba(255, 255, 255, 0.22);
+  animation-delay: -6s;
+}
+
+@keyframes blobFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%      { transform: translate(40px, 60px) scale(1.15); }
+}
+
+/* Warna latar setiap slide */
+.theme-cover    { background-image: linear-gradient(135deg, #1e1b4b, #1d4ed8, #7c3aed, #1e1b4b); }
+.theme-flow     { background-image: linear-gradient(135deg, #064e3b, #0f766e, #1d4ed8, #064e3b); }
+.theme-category { background-image: linear-gradient(135deg, #4c0519, #be123c, #7c3aed, #4c0519); }
+.theme-days     { background-image: linear-gradient(135deg, #0c4a6e, #1d4ed8, #0891b2, #0c4a6e); }
+.theme-habit    { background-image: linear-gradient(135deg, #052e16, #047857, #0d9488, #052e16); }
+.theme-better   { background-image: linear-gradient(135deg, #022c22, #059669, #0891b2, #022c22); }
+.theme-worse    { background-image: linear-gradient(135deg, #431407, #c2410c, #be123c, #431407); }
+.theme-finale   { background-image: linear-gradient(135deg, #0b1120, #1e3a8a, #6d28d9, #db2777, #0b1120); }
+
+/* Garis progres di atas */
+.recap-progress {
+  position: absolute;
+  top: calc(14px + env(safe-area-inset-top));
+  left: 14px;
+  right: 56px;
+  z-index: 3;
+  display: flex;
+  gap: 4px;
+}
+
+.recap-progress span {
+  flex: 1;
+  height: 3px;
+  overflow: hidden;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.recap-progress i {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: #fff;
+}
+
+.recap-progress span.done i {
+  width: 100%;
+}
+
+.recap-progress span.active i {
+  width: 100%;
+  animation: progressFill 0.6s ease;
+}
+
+@keyframes progressFill {
+  from { width: 0; }
+}
+
+.recap-close {
+  position: absolute;
+  top: calc(4px + env(safe-area-inset-top));
+  right: 8px;
+  z-index: 4;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  cursor: pointer;
+}
+
+/* Area ketuk kiri/kanan */
+.recap-tap {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 1;
+  border: none;
+  background: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.recap-tap.prev { left: 0; width: 30%; }
+.recap-tap.next { right: 0; width: 70%; }
+
+/* ===== ISI SLIDE ===== */
+.recap-slide {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 14px;
+  height: 100%;
+  padding: 70px 28px 40px;
+  text-align: center;
+  pointer-events: none;   /* ketukan diteruskan ke area kiri/kanan */
+}
+
+.recap-slide button {
+  pointer-events: auto;
+}
+
+.recap-slide.show > * {
+  animation: recapRise 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.recap-slide.show > *:nth-child(2) { animation-delay: 0.08s; }
+.recap-slide.show > *:nth-child(3) { animation-delay: 0.16s; }
+.recap-slide.show > *:nth-child(4) { animation-delay: 0.24s; }
+.recap-slide.show > *:nth-child(5) { animation-delay: 0.32s; }
+.recap-slide.show > *:nth-child(6) { animation-delay: 0.40s; }
+
+@keyframes recapRise {
+  from { opacity: 0; transform: translateY(24px) scale(0.97); }
+  to   { opacity: 1; transform: none; }
+}
+
+.recap-kicker {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+.recap-headline {
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  text-transform: capitalize;
+}
+
+.recap-sub {
+  font-size: 15px;
+  line-height: 1.55;
+  opacity: 0.92;
+}
+
+.recap-hint {
+  margin-top: 20px;
+  font-size: 13px;
+  opacity: 0.7;
+  animation: softBlink 1.8s ease-in-out infinite !important;
+}
+
+.recap-emoji {
+  display: block;
+  font-size: 40px;
+  line-height: 1;
+}
+
+.recap-emoji.big {
+  font-size: 72px;
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.3));
+}
+
+.recap-emoji.spin {
+  animation: emojiBounce 0.9s cubic-bezier(0.3, 1.6, 0.5, 1) both !important;
+}
+
+@keyframes emojiBounce {
+  from { opacity: 0; transform: scale(0.2) rotate(-40deg); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* Arus uang */
+.recap-flow {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: left;
+}
+
+.recap-flow-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(6px);
+}
+
+.recap-flow-row span {
+  font-size: 14px;
+  opacity: 0.85;
+}
+
+.recap-flow-row strong {
+  font-size: 22px;
+  font-variant-numeric: tabular-nums;
+}
+
+.recap-flow-row.in strong  { color: #6ee7b7; }
+.recap-flow-row.out strong { color: #fda4af; }
+.recap-flow-row.save strong { color: #bfdbfe; }
+
+/* Batang kategori */
+.recap-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 6px;
+  text-align: left;
+}
+
+.recap-bar-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+}
+
+.recap-bar-row span {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.recap-bar {
+  height: 10px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.recap-bar i {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: #fff;
+  transform-origin: left;
+  animation: barGrow 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation-delay: calc(0.4s + var(--i) * 0.12s);
+}
+
+/* Kalender mini */
+.recap-mini-cal {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  width: min(280px, 100%);
+  margin: 0 auto;
+}
+
+.recap-mini-cal i {
+  aspect-ratio: 1;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  animation: calPop 0.35s ease both;
+  animation-delay: calc(0.2s + var(--d, 0) * 18ms);
+}
+
+.recap-mini-cal i.blank { background: none; animation: none; }
+.recap-mini-cal i.h1 { background: rgba(255, 255, 255, 0.3); }
+.recap-mini-cal i.h2 { background: rgba(255, 255, 255, 0.5); }
+.recap-mini-cal i.h3 { background: rgba(255, 255, 255, 0.75); }
+.recap-mini-cal i.h4 { background: #fff; box-shadow: 0 0 12px rgba(255, 255, 255, 0.7); }
+.recap-mini-cal i.future { opacity: 0.3; }
+
+.recap-facts {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 14px;
+  text-align: left;
+}
+
+.recap-facts p {
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Cincin persentase */
+.recap-ring {
+  --p: 0;
+  display: grid;
+  place-items: center;
+  width: 170px;
+  height: 170px;
+  margin: 0 auto;
+  border-radius: 50%;
+  background: conic-gradient(#fff calc(var(--p) * 1%), rgba(255, 255, 255, 0.18) 0);
+  animation: ringSpin 1s cubic-bezier(0.2, 0.8, 0.2, 1) both !important;
+}
+
+.recap-ring > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: rgba(6, 78, 59, 0.85);
+}
+
+.recap-ring strong {
+  font-size: 44px;
+  line-height: 1;
+}
+
+.recap-ring span {
+  font-size: 13px;
+  opacity: 0.85;
+}
+
+@keyframes ringSpin {
+  from { opacity: 0; transform: rotate(-120deg) scale(0.7); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* Penutup */
+.recap-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 24px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+}
+
+.recap-badge .recap-emoji {
+  animation: emojiBounce 0.9s cubic-bezier(0.3, 1.6, 0.5, 1) 0.2s both;
+}
+
+.recap-tip {
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.1);
+  font-size: 13px;
+  line-height: 1.55;
+  text-align: left;
+}
+
+.recap-done {
+  align-self: center;
+  margin-top: 6px;
+  padding: 12px 36px;
+  border: none;
+  border-radius: 999px;
+  background: #fff;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  color: #1e3a8a;
+  cursor: pointer;
+  box-shadow: 0 10px 24px -10px rgba(0, 0, 0, 0.5);
+}
+
+/* ===== HP: layar penuh ===== */
+@media (max-width: 768px) {
+  .recap-stage {
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    border-radius: 0;
+  }
+
+  .recap-headline {
+    font-size: 28px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .recap-banner,
+  .recap-banner::after,
+  .recap-banner-gift,
+  .recap-stage,
+  .recap-stage::before,
+  .recap-stage::after,
+  .recap-slide.show > *,
+  .recap-mini-cal i,
+  .recap-bar i,
+  .recap-ring,
+  .recap-hint {
+    animation: none !important;
+  }
+}

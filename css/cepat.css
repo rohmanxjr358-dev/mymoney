@@ -1,0 +1,364 @@
+/* =====================================================
+   CEPAT.CSS — Catat Kilat (tombol sekali ketuk)
+   ===================================================== */
+
+/* ===== WARNA SETIAP TOMBOL ===== */
+.tone-blue    { --tone: #2563eb; --tone-2: #60a5fa; --tone-soft: rgba(37, 99, 235, 0.10); }
+.tone-violet  { --tone: #7c3aed; --tone-2: #a78bfa; --tone-soft: rgba(124, 58, 237, 0.10); }
+.tone-teal    { --tone: #0d9488; --tone-2: #2dd4bf; --tone-soft: rgba(13, 148, 136, 0.10); }
+.tone-amber   { --tone: #d97706; --tone-2: #fbbf24; --tone-soft: rgba(217, 119, 6, 0.10); }
+.tone-rose    { --tone: #e11d48; --tone-2: #fb7185; --tone-soft: rgba(225, 29, 72, 0.10); }
+.tone-sky     { --tone: #0284c7; --tone-2: #38bdf8; --tone-soft: rgba(2, 132, 199, 0.10); }
+.tone-emerald { --tone: #059669; --tone-2: #34d399; --tone-soft: rgba(5, 150, 105, 0.10); }
+.tone-orange  { --tone: #ea580c; --tone-2: #fb923c; --tone-soft: rgba(234, 88, 12, 0.10); }
+
+html[data-theme="dark"] [class*="tone-"] {
+  --tone-soft: rgba(148, 163, 184, 0.08);
+}
+
+/* ===== KARTU ===== */
+#dash-quick {
+  margin-top: 16px;
+}
+
+.quick-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 2px;
+}
+
+.quick-bolt {
+  display: inline-block;
+  animation: boltZap 3.5s ease-in-out infinite;
+}
+
+@keyframes boltZap {
+  0%, 82%, 100% { transform: none; }
+  86%           { transform: rotate(-14deg) scale(1.25); }
+  90%           { transform: rotate(10deg) scale(1.1); }
+}
+
+.quick-sub {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* ===== DERETAN TOMBOL ===== */
+.quick-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.quick-chip {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: linear-gradient(180deg, var(--tone-soft), transparent 70%), var(--surface);
+  font: inherit;
+  color: var(--text);
+  cursor: pointer;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition: transform 0.15s, border-color 0.2s, box-shadow 0.2s;
+}
+
+.quick-chip:hover {
+  border-color: var(--tone);
+  box-shadow: 0 6px 18px -10px var(--tone);
+}
+
+.quick-chip.pressing {
+  transform: scale(0.94);
+}
+
+.quick-emoji {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--tone), var(--tone-2));
+  font-size: 22px;
+  line-height: 1;
+  box-shadow: 0 6px 14px -6px var(--tone);
+}
+
+.quick-label {
+  max-width: 100%;
+  overflow: hidden;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.quick-amount {
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--bg);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+/* Lencana "×2" = sudah dipakai 2 kali hari ini */
+.quick-count {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  min-width: 22px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--tone);
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* Efek setelah diketuk: membal + gelombang */
+.quick-chip.popped {
+  animation: chipPop 0.4s ease;
+}
+
+.quick-chip.popped::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--tone);
+  opacity: 0.35;
+  transform: translate(-50%, -50%) scale(0);
+  animation: chipRipple 0.6s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes chipPop {
+  0%   { transform: scale(1); }
+  35%  { transform: scale(0.9); }
+  70%  { transform: scale(1.06); }
+  100% { transform: scale(1); }
+}
+
+@keyframes chipRipple {
+  to { transform: translate(-50%, -50%) scale(9); opacity: 0; }
+}
+
+/* Angka yang melayang naik dari tombol */
+.quick-fly {
+  position: fixed;
+  z-index: 60;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--danger);
+  pointer-events: none;
+  transform: translate(-50%, 0);
+  animation: flyUp 1s ease-out forwards;
+}
+
+@keyframes flyUp {
+  0%   { opacity: 0; transform: translate(-50%, 0) scale(0.8); }
+  20%  { opacity: 1; transform: translate(-50%, -14px) scale(1.1); }
+  100% { opacity: 0; transform: translate(-50%, -60px) scale(1); }
+}
+
+/* ===== NOTIFIKASI + TOMBOL BATALKAN ===== */
+.snack {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  z-index: 55;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: max-content;
+  max-width: calc(100vw - 24px);
+  padding: 12px 14px 12px 18px;
+  overflow: hidden;
+  border-radius: 14px;
+  background: #0f172a;
+  font-size: 14px;
+  color: #e2e8f0;
+  box-shadow: 0 14px 30px -12px rgba(2, 6, 23, 0.6);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 20px);
+  transition: opacity 0.2s, transform 0.25s;
+}
+
+.snack.show {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(-50%, 0);
+}
+
+.snack-action {
+  flex-shrink: 0;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 8px;
+  background: rgba(96, 165, 250, 0.18);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  color: #93c5fd;
+  cursor: pointer;
+}
+
+/* Garis waktu tipis: notifikasi akan hilang saat garis habis */
+.snack-timer {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 3px;
+  width: 100%;
+  background: linear-gradient(90deg, #3b82f6, #a78bfa);
+  transform-origin: left;
+}
+
+.snack.show .snack-timer {
+  animation: snackTimer 5s linear forwards;
+}
+
+@keyframes snackTimer {
+  from { transform: scaleX(1); }
+  to   { transform: scaleX(0); }
+}
+
+html[data-theme="dark"] .snack {
+  background: #1e293b;
+  border: 1px solid #334155;
+}
+
+/* ===== JENDELA ATUR TOMBOL ===== */
+.quick-manage-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 8px 0 18px;
+}
+
+.quick-manage-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.quick-manage-row.editing {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+}
+
+.quick-manage-emoji {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 11px;
+  background: linear-gradient(135deg, var(--tone), var(--tone-2));
+  font-size: 18px;
+}
+
+.quick-manage-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.quick-manage-info strong {
+  font-size: 14px;
+}
+
+.quick-manage-info small {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.quick-manage-actions {
+  display: flex;
+  gap: 2px;
+}
+
+.quick-manage-actions .icon-btn[disabled] {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.emoji-picker {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 6px;
+  margin: 10px 0 14px;
+}
+
+.emoji-option {
+  aspect-ratio: 1;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  font-size: 18px;
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+
+.emoji-option.active {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+  transform: scale(1.08);
+}
+
+/* ===== HP ===== */
+@media (max-width: 768px) {
+  /* Tombol bisa digeser ke samping */
+  .quick-row {
+    display: flex;
+    gap: 10px;
+    margin: 14px -20px 0;
+    padding: 4px 20px 6px;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+  }
+
+  .quick-row::-webkit-scrollbar {
+    display: none;
+  }
+
+  .quick-chip {
+    flex: 0 0 86px;
+    scroll-snap-align: start;
+  }
+
+  .snack {
+    bottom: calc(86px + env(safe-area-inset-bottom));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .quick-bolt,
+  .quick-chip.popped,
+  .quick-chip.popped::after,
+  .quick-fly,
+  .snack.show .snack-timer {
+    animation: none;
+  }
+}

@@ -1,0 +1,130 @@
+/* =====================================================
+   TEMA.CSS — Tema gelap "Midnight Blue"
+   Aktif jika <html data-theme="dark"> (diatur oleh tema.js)
+   ===================================================== */
+
+html[data-theme="dark"] {
+  color-scheme: dark;           /* kalender, jam, scrollbar ikut gelap */
+
+  --bg: #0b1120;                /* hitam kebiruan */
+  --surface: #111a2e;           /* kartu & sidebar */
+  --text: #e2e8f0;              /* putih lembut */
+  --muted: #94a3b8;             /* abu kebiruan */
+  --border: #1e293b;
+  --primary: #3b82f6;           /* biru sedikit lebih terang agar jelas di latar gelap */
+  --primary-soft: #172544;
+
+  --success: #34d399;
+  --success-soft: #0f2d27;
+  --danger: #f87171;
+  --danger-soft: #3b1c24;
+  --warning: #fbbf24;
+  --warning-soft: #33290f;
+  --info: #38bdf8;
+  --info-soft: #0d2a3f;
+}
+
+/* ===== PENYESUAIAN BAGIAN YANG WARNANYA DITULIS LANGSUNG ===== */
+html[data-theme="dark"] .btn-primary:hover {
+  background-color: #2563eb;
+}
+
+html[data-theme="dark"] .btn-danger:hover {
+  background: #4c1d27;
+}
+
+html[data-theme="dark"] .toast {
+  background: #e2e8f0;
+  color: #0b1120;
+}
+
+html[data-theme="dark"] .modal-backdrop,
+html[data-theme="dark"] .more-backdrop {
+  background: rgba(2, 6, 23, 0.72);
+}
+
+html[data-theme="dark"] input::placeholder,
+html[data-theme="dark"] textarea::placeholder {
+  color: #64748b;
+}
+
+html[data-theme="dark"] select option {
+  background: var(--surface);
+  color: var(--text);
+}
+
+/* Kotak angka di dalam kartu dibuat sedikit lebih gelap dari kartunya */
+html[data-theme="dark"] .stat,
+html[data-theme="dark"] .safe-big,
+html[data-theme="dark"] .detail-note,
+html[data-theme="dark"] .fund-available {
+  background: #0d1526;
+}
+
+html[data-theme="dark"] .dash-stats .stat {
+  background: var(--surface);
+}
+
+/* Judul halaman & menu aktif (dari animasi.css) versi gelap */
+html[data-theme="dark"] #page-title {
+  background-image: linear-gradient(90deg, #93c5fd, #60a5fa, #a5b4fc, #60a5fa, #93c5fd);
+}
+
+html[data-theme="dark"] .nav-item.active,
+html[data-theme="dark"] .more-item.active {
+  background-image: linear-gradient(120deg, var(--primary-soft), #1e2f5c, var(--primary-soft));
+}
+
+/* Kartu saldo bercahaya biru di latar gelap */
+html[data-theme="dark"] .dash-hero {
+  box-shadow: 0 12px 32px -12px rgba(59, 130, 246, 0.55);
+}
+
+/* Tombol putih di kartu saldo */
+html[data-theme="dark"] .btn-light {
+  background: rgba(255, 255, 255, 0.95);
+  color: #1d4ed8;
+}
+
+/* ===== PEMILIH TEMA (di Pengaturan) ===== */
+.theme-label {
+  margin-top: 14px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.segmented.theme-picker {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 8px;
+}
+
+.theme-picker .segmented-btn.active {
+  color: var(--primary);
+}
+
+/* ===== SAAT DICETAK / PDF: SELALU TERANG ===== */
+@media print {
+  html[data-theme="dark"] {
+    color-scheme: light;
+    --bg: #ffffff;
+    --surface: #ffffff;
+    --text: #111827;
+    --muted: #4b5563;
+    --border: #d1d5db;
+    --primary: #1d4ed8;
+    --primary-soft: #eaf0fe;
+    --success: #059669;
+    --success-soft: #e7f7ef;
+    --danger: #dc2626;
+    --danger-soft: #fdecec;
+    --warning: #b45309;
+    --warning-soft: #fef3c7;
+    --info: #0369a1;
+    --info-soft: #e0f2fe;
+  }
+
+  html[data-theme="dark"] .stat,
+  html[data-theme="dark"] .safe-big {
+    background: #f4f6f9;
+  }
+}
